@@ -1,0 +1,3737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Csry.me</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0b;--surface:#111114;--s2:#18181d;--s3:#1e1e24;
+  --border:#222228;--border2:#2a2a32;
+  --maple:#e8622a;--maple-d:#7a3118;--maple-g:rgba(232,98,42,0.12);
+  --gold:#f0a500;--green:#2ecc71;--red:#e74c3c;--blue:#3b82f6;--purple:#8b5cf6;
+  --text:#f0ede8;--mid:#a0ada8;--dim:#5a5a60;
+  --sw:240px;--th:54px;--radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'DM Mono',monospace;background:var(--bg);color:var(--text)}
+
+/* TOPBAR */
+.topbar{height:var(--th);background:var(--surface);border-bottom:1px solid var(--border);display:none;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:200;position:relative}
+.hbg{display:flex;flex-direction:column;gap:4px;cursor:pointer;padding:4px;flex-shrink:0}
+.hbg span{display:block;width:20px;height:2px;background:var(--mid);border-radius:1px;transition:.25s}
+.hbg.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.hbg.open span:nth-child(2){opacity:0}
+.hbg.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.tb-logo{display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Syne',sans-serif;font-size:17px;font-weight:800}
+.tb-logo .leaf{width:22px;height:22px;background:var(--maple);clip-path:polygon(50% 0%,80% 20%,100% 50%,80% 80%,50% 100%,20% 80%,0% 50%,20% 20%)}
+.tb-logo span{color:var(--maple)}
+.tb-r{display:flex;align-items:center;gap:8px;margin-left:auto}
+.live-pill{display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.25);font-size:10px;color:var(--green)}
+.ldot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:lp 1.5s infinite}
+@keyframes lp{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(46,204,113,.4)}50%{opacity:.6;box-shadow:0 0 0 4px rgba(46,204,113,0)}}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden;height:100vh}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:150;backdrop-filter:blur(3px)}
+.overlay.show{display:block}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.sb-logo{height:80px;display:flex;align-items:center;justify-content:center;gap:9px;border-bottom:1px solid var(--border);margin-bottom:14px;flex-shrink:0}
+.logo-leaf{width:26px;height:26px;background:var(--maple);clip-path:polygon(50% 0%,80% 20%,100% 50%,80% 80%,50% 100%,20% 80%,0% 50%,20% 20%);animation:leafp 3s ease-in-out infinite;flex-shrink:0}
+@keyframes leafp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.75;transform:scale(.93)}}
+.logo-txt{font-family:'Syne',sans-serif;font-size:17px;font-weight:800}
+.logo-txt span{color:var(--maple)}
+
+.nav-sec{padding:0 10px;margin-bottom:16px}
+.nav-lbl{font-size:9px;letter-spacing:2px;color:var(--dim);padding:0 8px;margin-bottom:4px;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:8px;cursor:pointer;color:var(--dim);font-size:12px;transition:.15s;margin-bottom:1px;border:1px solid transparent;user-select:none}
+.ni:hover{background:var(--s2);color:var(--mid)}
+.ni.active{background:var(--maple-g);color:var(--maple);border-color:var(--maple-d)}
+.ni-icon{width:16px;height:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.ni-icon i,.ni-icon svg{width:14px;height:14px;stroke-width:1.8}
+.ni-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700}
+
+.sb-bot{margin-top:auto;padding:12px 10px;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:8px;padding:9px;border-radius:8px;background:var(--s2);border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:.15s}
+.user-card:hover{border-color:var(--maple-d)}
+.uav{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--maple),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
+.uname{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.utier{font-size:9px;color:var(--maple);margin-top:1px}
+.wk-bar{padding:9px;background:var(--s2);border-radius:8px;border:1px solid var(--border)}
+.wk-hdr{display:flex;justify-content:space-between;margin-bottom:5px}
+.wk-l{font-size:10px;color:var(--dim)}
+.wk-c{font-size:10px;color:var(--maple);font-family:'Syne',sans-serif;font-weight:700}
+.bar-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--maple-d),var(--maple));border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:22px 18px;scroll-behavior:smooth}
+.panel{display:none}
+.panel.active{display:block;animation:panelSlideIn .28s cubic-bezier(.4,0,.2,1)}
+
+/* CARDS */
+.page-hdr{margin-bottom:18px}
+.page-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px}
+.page-title span{color:var(--maple)}
+.page-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;transition:border-color .2s}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.ctag{font-size:9px;padding:3px 8px;border-radius:4px;background:var(--s2);color:var(--dim);letter-spacing:1px}
+
+/* BUTTONS */
+.btn{padding:8px 14px;border-radius:8px;font-size:12px;font-family:'DM Mono',monospace;cursor:pointer;border:none;transition:.15s;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:var(--maple);color:#fff}
+.btn-primary:hover{background:#d4551f;transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--mid)}
+.btn-ghost:hover{border-color:var(--maple);color:var(--maple)}
+.btn-danger{background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.25);color:var(--red)}
+.btn-danger:hover{background:rgba(231,76,60,.22)}
+.btn-success{background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);color:var(--green)}
+.btn-full{width:100%}
+.btn-sm{padding:5px 10px;font-size:10px}
+
+/* ACTION BUTTONS */
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.action-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:18px 12px;border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+  font-family:'DM Mono',monospace;
+}
+.action-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.action-btn:active{transform:translateY(0)}
+.action-btn.analyze-btn{border-color:var(--maple-d)}
+.action-btn.analyze-btn:hover{border-color:var(--maple);background:var(--maple-g)}
+.action-btn.record-btn{border-color:var(--border)}
+.action-btn.record-btn:hover{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.06)}
+.action-btn.record-btn.recording{
+  border-color:var(--red);background:rgba(231,76,60,.08);
+  animation:recordPulse 2s ease-in-out infinite;
+}
+@keyframes recordPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.15)}
+  50%{box-shadow:0 0 0 8px rgba(231,76,60,0)}
+}
+.ab-icon{font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center}.ab-icon svg{width:26px;height:26px;stroke-width:1.5}
+.ab-label{font-size:12px;font-family:'Syne',sans-serif;font-weight:700;color:var(--text)}
+.ab-sub{font-size:10px;color:var(--dim)}
+.rec-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--red);
+  display:inline-block;margin-right:5px;
+  animation:recBlink 1s step-start infinite;
+}
+@keyframes recBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ANALYZE LOADING */
+.analyze-overlay{
+  position:fixed;inset:0;background:rgba(10,10,11,.9);z-index:1500;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+  backdrop-filter:blur(6px);
+}
+.analyze-overlay.show{display:flex}
+.analyze-card{
+  background:var(--surface);border:1px solid var(--border2);border-radius:16px;
+  padding:28px 32px;width:100%;max-width:340px;text-align:center;
+}
+.analyze-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px}
+.analyze-sub{font-size:11px;color:var(--dim);margin-bottom:24px}
+.analyze-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:20px}
+.analyze-fill{height:100%;background:linear-gradient(90deg,var(--maple-d),var(--maple));border-radius:2px;width:0%;transition:width .4s ease}
+.analyze-steps{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:20px}
+.analyze-step{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;transition:all .25s}
+.analyze-step.active{color:var(--maple);background:var(--maple-g)}
+.analyze-step.done{color:var(--green)}
+.analyze-step-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.analyze-result{display:none;text-align:left}
+.analyze-result.show{display:block}
+.ar-item{display:flex;gap:9px;padding:9px;background:var(--s2);border-radius:7px;margin-bottom:6px;border-left:2px solid var(--maple);font-size:11px;color:var(--mid);line-height:1.5}
+.ar-item strong{color:var(--text)}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px;position:relative;overflow:hidden;transition:.2s}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--maple);transform:scaleX(0);transform-origin:left;transition:.3s}
+.stat-card:hover::before{transform:scaleX(1)}
+.sl{font-size:9px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:5px}
+.sv{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:3px}
+.sd{font-size:10px}
+.up{color:var(--green)}.dn{color:var(--red)}.dm{color:var(--dim)}
+
+/* MATCH */
+.match-item{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s}
+.match-item:last-child{border-bottom:none}
+.match-item:hover{padding-left:4px}
+.mr{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;flex-shrink:0}
+.win{background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.2)}
+.loss{background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.2)}
+.mi{flex:1;min-width:0}.mm{font-size:12px}.mt{font-size:10px;color:var(--dim);margin-top:1px}
+.ms{text-align:right;flex-shrink:0}.mk{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}.mw{font-size:10px;color:var(--dim);margin-top:1px}
+
+/* BARS */
+.wpn-item{margin-bottom:11px}.wpn-item:last-child{margin-bottom:0}
+.wpn-hdr{display:flex;justify-content:space-between;margin-bottom:4px}
+.wpn-n{font-size:11px;color:var(--mid)}.wpn-p{font-size:11px;font-family:'Syne',sans-serif;font-weight:700}
+
+/* HEATMAP */
+.hm-wrap{background:var(--s2);border-radius:8px;height:150px;position:relative;overflow:hidden}
+.hm-grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(20,1fr);grid-template-rows:repeat(10,1fr);gap:1px;padding:6px}
+.hm-cell{border-radius:2px}
+.hm-lbl{position:absolute;bottom:6px;right:8px;font-size:9px;color:var(--dim);letter-spacing:1px}
+.hm-lock{position:absolute;inset:0;background:rgba(10,10,11,.75);backdrop-filter:blur(5px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:8px}
+
+/* TIPS */
+.tip{display:flex;gap:9px;padding:10px;border-radius:8px;background:var(--s2);margin-bottom:7px;border-left:2px solid transparent;transition:.15s}
+.tip:hover{border-left-color:var(--maple)}.tip:last-child{margin-bottom:0}
+.ti{font-size:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;width:18px;height:18px}.ti svg{width:15px;height:15px;stroke-width:1.8}
+.tt{font-size:11px;color:var(--mid);line-height:1.55}.tt strong{color:var(--text)}
+
+/* LINK ITEMS */
+.link-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);margin-bottom:7px;transition:.15s}
+.link-item:hover{border-color:var(--border2)}
+.ll{display:flex;align-items:center;gap:8px;font-size:12px}
+.linked{color:var(--green)}.unlinked{color:var(--dim)}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:24px;width:100%;max-width:400px;position:relative;animation:modalIn .2s ease;max-height:90vh;overflow-y:auto}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:6px;background:var(--s2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--mid);transition:.15s}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:11px;color:var(--dim);margin-bottom:18px}
+
+/* TOAST */
+.toast-area{position:fixed;bottom:20px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:11px 16px;font-size:12px;display:flex;align-items:center;gap:8px;min-width:220px;animation:toastIn .25s ease;pointer-events:all;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast.out{animation:toastOut .25s ease forwards}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+.toast-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.toast-green .toast-dot{background:var(--green)}
+.toast-red .toast-dot{background:var(--red)}
+.toast-maple .toast-dot{background:var(--maple)}
+
+/* BANNERS */
+.up-banner{background:linear-gradient(135deg,var(--maple-g),transparent);border:1px solid var(--maple-d);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.up-txt{font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:10px}
+.up-txt strong{color:var(--maple)}
+.trial-banner{background:linear-gradient(135deg,rgba(240,165,0,.1),transparent);border:1px solid rgba(240,165,0,.3);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.trial-icon{font-size:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}.trial-icon svg{width:20px;height:20px;stroke-width:1.8}
+.trial-txt{font-size:11px;color:var(--mid);flex:1}
+.trial-txt strong{color:var(--gold)}
+.info-banner{background:var(--s2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.info-banner p{font-size:11px;color:var(--mid);line-height:1.6}
+
+/* PLAN CARDS */
+.plan-card{border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border)}
+.plan-card.featured{border-color:var(--maple-d);background:linear-gradient(135deg,var(--maple-g),var(--surface))}
+.plan-card.current{border-color:var(--green);opacity:.7}
+.plan-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:2px}
+.plan-price{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--maple);margin-bottom:2px}
+.plan-price small{font-size:13px;color:var(--dim);font-family:'DM Mono',monospace}
+.plan-trial{font-size:10px;color:var(--gold);margin-bottom:10px}
+.plan-feats{font-size:11px;color:var(--mid);line-height:2;margin-bottom:14px}
+
+/* SQUAD */
+.squad-member{display:flex;align-items:center;gap:10px;padding:10px;background:var(--s2);border-radius:8px;border:1px solid var(--border);margin-bottom:7px;transition:.15s}
+.squad-member:hover{border-color:var(--border2)}
+.sm-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.sm-info{flex:1;min-width:0}.sm-name{font-size:12px}.sm-stats{font-size:10px;color:var(--dim);margin-top:1px}
+.sm-kd{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;flex-shrink:0}
+.role-badge{font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px}
+.role-owner{background:rgba(240,165,0,.15);color:var(--gold);border:1px solid rgba(240,165,0,.25)}
+.role-member{background:var(--s2);color:var(--dim);border:1px solid var(--border)}
+
+/* MOD */
+.flag-item{display:flex;align-items:center;gap:9px;padding:11px;background:var(--s2);border-radius:8px;border:1px solid var(--border);margin-bottom:7px;transition:.15s}
+.flag-item:hover{border-color:var(--border2)}
+.fbadge{padding:3px 7px;border-radius:4px;font-size:9px;white-space:nowrap;flex-shrink:0}
+.fhigh{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.22)}
+.fmed{background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.22)}
+.fi{flex:1;min-width:0}.fn{font-size:12px}.fr{font-size:10px;color:var(--dim);margin-top:1px}
+.fa{display:flex;gap:5px;flex-shrink:0}
+.ib{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:none;transition:.15s}
+.ib-ban{background:rgba(231,76,60,.12)}.ib-ban:hover{background:rgba(231,76,60,.28)}
+.ib-ok{background:rgba(46,204,113,.12)}.ib-ok:hover{background:rgba(46,204,113,.28)}
+
+/* SECURITY */
+.toggle{width:34px;height:18px;border-radius:9px;background:var(--border);position:relative;cursor:pointer;transition:.2s;flex-shrink:0}
+.toggle.on{background:var(--maple)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on::after{transform:translateX(16px)}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.set-row:last-child{border-bottom:none}
+.set-n{font-size:12px}.set-d{font-size:10px;color:var(--dim);margin-top:2px}
+
+/* EXPORT */
+.exp-opt{display:flex;align-items:center;gap:11px;padding:13px;background:var(--s2);border-radius:9px;border:1px solid var(--border);margin-bottom:9px;cursor:pointer;transition:.15s}
+.exp-opt:hover{border-color:var(--maple-d);transform:translateX(2px)}
+.exp-icon{font-size:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}.exp-icon svg{width:22px;height:22px;stroke-width:1.5}
+.exp-n{font-size:12px;font-family:'Syne',sans-serif;font-weight:700}
+.exp-d{font-size:10px;color:var(--dim);margin-top:2px}
+.exp-arr{color:var(--dim);font-size:13px;margin-left:auto}
+
+/* API KEYS */
+.key-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);margin-bottom:7px}
+.key-n{font-size:11px;margin-bottom:3px}.key-v{font-size:10px;color:var(--maple);font-family:'DM Mono',monospace;letter-spacing:.5px}
+
+/* REVENUE */
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.rev-c{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px}
+.rev-l{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
+.rev-v{font-family:'Syne',sans-serif;font-size:20px;font-weight:800}
+
+/* INPUT */
+.input{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:.15s;margin-bottom:10px}
+.input:focus{border-color:var(--maple)}
+.input-lbl{font-size:10px;color:var(--dim);margin-bottom:5px;display:block}
+
+/* LOCK SCREEN */
+.lock-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 24px;min-height:300px}
+.lock-icon{font-size:40px;margin-bottom:16px;opacity:.6;display:flex;align-items:center;justify-content:center}.lock-icon svg{width:40px;height:40px;stroke-width:1.2}
+.lock-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px}
+.lock-sub{font-size:12px;color:var(--mid);margin-bottom:20px;line-height:1.6;max-width:280px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ═══════════════════════════════════════
+   ANIMATION SYSTEM
+═══════════════════════════════════════ */
+
+/* Page/panel transitions */
+.panel { animation: panelSlideIn .28s cubic-bezier(.4,0,.2,1); }
+@keyframes panelSlideIn {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Card entrance — staggered via nth-child */
+.card {
+  animation: cardReveal .35s cubic-bezier(.4,0,.2,1) both;
+}
+.card:nth-child(1) { animation-delay:.04s }
+.card:nth-child(2) { animation-delay:.08s }
+.card:nth-child(3) { animation-delay:.12s }
+.card:nth-child(4) { animation-delay:.16s }
+.card:nth-child(5) { animation-delay:.20s }
+.card:nth-child(6) { animation-delay:.24s }
+@keyframes cardReveal {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Stat cards pop in */
+.stat-card {
+  animation: statPop .4s cubic-bezier(.34,1.4,.64,1) both;
+}
+.stats-grid .stat-card:nth-child(1) { animation-delay:.05s }
+.stats-grid .stat-card:nth-child(2) { animation-delay:.10s }
+.stats-grid .stat-card:nth-child(3) { animation-delay:.15s }
+.stats-grid .stat-card:nth-child(4) { animation-delay:.20s }
+@keyframes statPop {
+  from { opacity:0; transform:scale(.92) translateY(8px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+/* Match items slide in from left */
+.match-item {
+  animation: matchSlide .3s cubic-bezier(.4,0,.2,1) both;
+}
+.match-item:nth-child(1) { animation-delay:.06s }
+.match-item:nth-child(2) { animation-delay:.10s }
+.match-item:nth-child(3) { animation-delay:.14s }
+.match-item:nth-child(4) { animation-delay:.18s }
+.match-item:nth-child(5) { animation-delay:.22s }
+.match-item:nth-child(6) { animation-delay:.26s }
+@keyframes matchSlide {
+  from { opacity:0; transform:translateX(-8px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Nav items shimmer on active */
+.ni.active::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:8px;
+  background:linear-gradient(90deg,transparent,rgba(232,98,42,.08),transparent);
+  animation:niShimmer 2s ease infinite;
+}
+@keyframes niShimmer {
+  0%   { transform:translateX(-100%); }
+  60%  { transform:translateX(100%); }
+  100% { transform:translateX(100%); }
+}
+
+/* Tip items fade in from left */
+.tip {
+  animation: tipIn .3s cubic-bezier(.4,0,.2,1) both;
+}
+.tip:nth-child(1) { animation-delay:.05s }
+.tip:nth-child(2) { animation-delay:.10s }
+.tip:nth-child(3) { animation-delay:.15s }
+@keyframes tipIn {
+  from { opacity:0; transform:translateX(-6px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Flag items pulse in */
+.flag-item {
+  animation: flagIn .32s cubic-bezier(.4,0,.2,1) both;
+}
+.flag-item:nth-child(1) { animation-delay:.04s }
+.flag-item:nth-child(2) { animation-delay:.08s }
+.flag-item:nth-child(3) { animation-delay:.12s }
+@keyframes flagIn {
+  from { opacity:0; transform:translateX(10px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Squad member rows */
+.squad-member {
+  animation: memberIn .3s cubic-bezier(.4,0,.2,1) both;
+}
+.squad-member:nth-child(1) { animation-delay:.04s }
+.squad-member:nth-child(2) { animation-delay:.08s }
+.squad-member:nth-child(3) { animation-delay:.12s }
+.squad-member:nth-child(4) { animation-delay:.16s }
+.squad-member:nth-child(5) { animation-delay:.20s }
+@keyframes memberIn {
+  from { opacity:0; transform:translateX(-6px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Export options */
+.exp-opt {
+  animation: expIn .28s cubic-bezier(.4,0,.2,1) both;
+}
+.exp-opt:nth-child(1) { animation-delay:.05s }
+.exp-opt:nth-child(2) { animation-delay:.09s }
+.exp-opt:nth-child(3) { animation-delay:.13s }
+@keyframes expIn {
+  from { opacity:0; transform:translateX(-8px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Recording cards pop */
+.rec-card {
+  animation: recCardPop .38s cubic-bezier(.34,1.2,.64,1) both;
+}
+.recordings-grid .rec-card:nth-child(1) { animation-delay:.05s }
+.recordings-grid .rec-card:nth-child(2) { animation-delay:.11s }
+.recordings-grid .rec-card:nth-child(3) { animation-delay:.17s }
+.recordings-grid .rec-card:nth-child(4) { animation-delay:.23s }
+@keyframes recCardPop {
+  from { opacity:0; transform:scale(.94) translateY(10px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+/* Upgrade/trial banner slide down */
+.up-banner, .trial-banner {
+  animation: bannerSlide .35s cubic-bezier(.4,0,.2,1) both;
+  animation-delay:.05s;
+}
+@keyframes bannerSlide {
+  from { opacity:0; transform:translateY(-8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Link items */
+.link-item {
+  animation: linkIn .3s cubic-bezier(.4,0,.2,1) both;
+}
+.link-item:nth-child(1) { animation-delay:.04s }
+.link-item:nth-child(2) { animation-delay:.08s }
+.link-item:nth-child(3) { animation-delay:.12s }
+@keyframes linkIn {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Plan cards */
+.plan-card {
+  animation: planIn .36s cubic-bezier(.4,0,.2,1) both;
+}
+.plan-card:nth-child(1) { animation-delay:.04s }
+.plan-card:nth-child(2) { animation-delay:.10s }
+.plan-card:nth-child(3) { animation-delay:.16s }
+.plan-card:nth-child(4) { animation-delay:.22s }
+@keyframes planIn {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Page title typewriter-style reveal */
+.page-title {
+  animation: titleReveal .4s cubic-bezier(.4,0,.2,1) both;
+  animation-delay:.02s;
+}
+@keyframes titleReveal {
+  from { opacity:0; transform:translateY(-6px); clip-path:inset(0 100% 0 0); }
+  to   { opacity:1; transform:translateY(0); clip-path:inset(0 0% 0 0); }
+}
+
+/* Sidebar nav section labels */
+.nav-lbl {
+  animation: labelFade .3s ease both;
+}
+.nav-sec:nth-child(1) .nav-lbl { animation-delay:.05s }
+.nav-sec:nth-child(2) .nav-lbl { animation-delay:.10s }
+.nav-sec:nth-child(3) .nav-lbl { animation-delay:.15s }
+.nav-sec:nth-child(4) .nav-lbl { animation-delay:.20s }
+@keyframes labelFade {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+
+/* Sidebar nav items stagger */
+.ni {
+  animation: niFadeIn .25s ease both;
+}
+.nav-sec:nth-child(1) .ni:nth-child(1) { animation-delay:.06s }
+.nav-sec:nth-child(1) .ni:nth-child(2) { animation-delay:.09s }
+.nav-sec:nth-child(1) .ni:nth-child(3) { animation-delay:.12s }
+.nav-sec:nth-child(1) .ni:nth-child(4) { animation-delay:.15s }
+.nav-sec:nth-child(2) .ni { animation-delay:.18s }
+.nav-sec:nth-child(3) .ni:nth-child(1) { animation-delay:.20s }
+.nav-sec:nth-child(3) .ni:nth-child(2) { animation-delay:.22s }
+.nav-sec:nth-child(3) .ni:nth-child(3) { animation-delay:.24s }
+.nav-sec:nth-child(3) .ni:nth-child(4) { animation-delay:.26s }
+.nav-sec:nth-child(4) .ni:nth-child(1) { animation-delay:.28s }
+.nav-sec:nth-child(4) .ni:nth-child(2) { animation-delay:.30s }
+.nav-sec:nth-child(4) .ni:nth-child(3) { animation-delay:.32s }
+@keyframes niFadeIn {
+  from { opacity:0; transform:translateX(-8px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Logo entrance */
+.sb-logo {
+  animation: logoEntrance .5s cubic-bezier(.34,1.3,.64,1) both;
+  animation-delay:.01s;
+}
+@keyframes logoEntrance {
+  from { opacity:0; transform:scale(.85); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+/* Sidebar bottom user card */
+.sb-bot {
+  animation: botSlideUp .35s cubic-bezier(.4,0,.2,1) both;
+  animation-delay:.3s;
+}
+@keyframes botSlideUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Watermark recording badge pulse */
+.rec-watermark-badge {
+  animation: wmBadgePulse 4s ease-in-out infinite;
+}
+@keyframes wmBadgePulse {
+  0%,100% { opacity:1; }
+  50%     { opacity:.6; }
+}
+
+/* Heatmap cells ripple in */
+.hm-cell {
+  animation: hmCellIn .6s ease both;
+}
+@keyframes hmCellIn {
+  from { opacity:0; transform:scale(0); }
+  to   { opacity:var(--target-opacity, 1); transform:scale(1); }
+}
+
+/* Wk bar fill animation */
+#wk-bar {
+  animation: wkBarGrow .8s cubic-bezier(.4,0,.2,1) both;
+  animation-delay:.4s;
+  width:0% !important;
+}
+#wk-bar.animated { animation: none; }
+
+/* Replay modal entrance */
+.replay-modal {
+  animation: replayIn .3s cubic-bezier(.34,1.1,.64,1);
+}
+@keyframes replayIn {
+  from { opacity:0; transform:scale(.96) translateY(12px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+/* Action buttons */
+.action-btn {
+  animation: actionBtnIn .4s cubic-bezier(.34,1.2,.64,1) both;
+}
+.action-btn:nth-child(1) { animation-delay:.08s }
+.action-btn:nth-child(2) { animation-delay:.14s }
+@keyframes actionBtnIn {
+  from { opacity:0; transform:scale(.9) translateY(8px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+
+/* Weekly bar label counter */
+.wk-c {
+  animation: wkCountIn .4s ease both;
+  animation-delay:.5s;
+}
+@keyframes wkCountIn {
+  from { opacity:0; transform:translateY(-4px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Page sub text */
+.page-sub {
+  animation: subFade .4s ease both;
+  animation-delay:.08s;
+}
+@keyframes subFade {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+
+/* Dismiss/remove animations */
+@keyframes slideOutRight {
+  to { opacity:0; transform:translateX(24px); max-height:0; padding:0; margin:0; }
+}
+@keyframes slideOutLeft {
+  to { opacity:0; transform:translateX(-24px); max-height:0; padding:0; margin:0; }
+}
+
+/* Smooth hover ripple on buttons */
+.btn {
+  position:relative;
+  overflow:hidden;
+}
+.btn::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,0);
+  transition:background .15s;
+  border-radius:inherit;
+}
+.btn:active::after {
+  background:rgba(255,255,255,.08);
+}
+
+/* Scanning line on recording cards while recording */
+.action-btn.record-btn.recording .ab-icon::after {
+  content:'';
+  position:absolute;
+  left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);
+  animation:scanLine 1.5s linear infinite;
+  top:0;
+}
+@keyframes scanLine {
+  from { transform:translateY(0); }
+  to   { transform:translateY(60px); }
+}
+
+/* RECORDING CARDS */
+.recordings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.rec-card{
+  border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--surface);overflow:hidden;cursor:pointer;
+  transition:all .2s;position:relative;
+}
+.rec-card:hover{border-color:var(--maple-d);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.rec-thumb{
+  width:100%;aspect-ratio:16/9;
+  background:var(--s2);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.rec-thumb-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#0d1117 0%,#1a1f2e 50%,#0f1419 100%);
+}
+.rec-thumb-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(232,98,42,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(232,98,42,.04) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.rec-thumb-play{
+  position:relative;z-index:2;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(232,98,42,.15);border:1px solid rgba(232,98,42,.3);
+  display:flex;align-items:center;justify-content:center;
+  transition:.2s;
+}
+.rec-card:hover .rec-thumb-play{background:rgba(232,98,42,.3)}
+.rec-thumb-play svg{width:16px;height:16px;color:var(--maple)}
+.rec-watermark-badge{
+  position:absolute;bottom:6px;right:6px;z-index:3;
+  display:flex;align-items:center;gap:4px;
+  padding:3px 7px;border-radius:6px;
+  background:rgba(10,10,11,.8);backdrop-filter:blur(4px);
+  border:1px solid rgba(232,98,42,.3);
+}
+.rwb-leaf{width:9px;height:9px;background:var(--maple);clip-path:polygon(50% 0%,80% 20%,100% 50%,80% 80%,50% 100%,20% 80%,0% 50%,20% 20%);flex-shrink:0}
+.rwb-text{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;color:var(--text)}
+.rwb-text span{color:var(--maple)}
+.rec-thumb-dur{
+  position:absolute;bottom:6px;left:6px;z-index:3;
+  font-size:10px;color:var(--text);background:rgba(0,0,0,.6);
+  padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;
+}
+.rec-info{padding:10px 12px}
+.rec-info-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.rec-mode{font-size:12px;font-weight:500}
+.rec-result-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-family:'Syne',sans-serif;font-weight:700}
+.rec-result-w{background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.2)}
+.rec-result-l{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.2)}
+.rec-meta{font-size:10px;color:var(--dim);display:flex;align-items:center;gap:6px}
+.rec-meta svg{width:11px;height:11px;flex-shrink:0}
+
+/* REPLAY MODAL */
+.replay-bg{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);
+  z-index:600;flex-direction:column;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);
+}
+.replay-bg.show{display:flex}
+.replay-modal{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:16px;width:100%;max-width:680px;
+  overflow:hidden;display:flex;flex-direction:column;
+  max-height:90vh;
+}
+.replay-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.replay-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800}
+.replay-meta{font-size:10px;color:var(--dim);margin-top:2px}
+.replay-canvas-wrap{
+  position:relative;width:100%;background:#050608;
+  flex-shrink:0;
+}
+#replay-canvas{display:block;width:100%;height:320px}
+.replay-wm{
+  position:absolute;bottom:12px;left:50%;
+  transform:translateX(-50%);
+  display:flex;align-items:center;gap:5px;
+  opacity:.18;pointer-events:none;
+}
+.replay-wm-leaf{
+  width:16px;height:16px;background:#fff;
+  clip-path:polygon(50% 0%,80% 20%,100% 50%,80% 80%,50% 100%,20% 80%,0% 50%,20% 20%);
+}
+.replay-wm-txt{
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:800;
+  color:#fff;letter-spacing:-.3px;
+}
+.replay-controls{
+  padding:12px 18px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.replay-scrubber{
+  flex:1;height:4px;background:var(--border);border-radius:2px;
+  cursor:pointer;position:relative;
+}
+.replay-progress{
+  height:100%;background:var(--maple);border-radius:2px;
+  width:0%;transition:width .1s linear;
+}
+.replay-time{font-size:10px;color:var(--dim);font-family:'DM Mono',monospace;flex-shrink:0}
+.replay-legend{
+  padding:12px 18px;display:flex;gap:16px;flex-wrap:wrap;flex-shrink:0;
+  border-top:1px solid var(--border);
+}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--mid)}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.transcript-item{
+  display:flex;align-items:center;gap:7px;
+  padding:5px 10px;border-radius:6px;
+  background:var(--s2);border:1px solid var(--border);
+  font-size:11px;color:var(--mid);
+  transition:border-color .2s, background .2s;
+  animation:transcriptIn .2s ease;
+}
+@keyframes transcriptIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+.transcript-item.blink{
+  border-color:var(--maple);
+  background:var(--maple-g);
+  color:var(--text);
+  animation:transcriptIn .2s ease, blinkPulse .5s ease 2;
+}
+.transcript-item.blink-red{
+  border-color:rgba(231,76,60,.4);
+  background:rgba(231,76,60,.08);
+  color:var(--text);
+  animation:transcriptIn .2s ease, blinkPulseRed .5s ease 2;
+}
+.transcript-item.blink-blue{
+  border-color:rgba(59,130,246,.3);
+  background:rgba(59,130,246,.08);
+  color:var(--text);
+  animation:transcriptIn .2s ease, blinkPulseBlue .5s ease 2;
+}
+@keyframes blinkPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(232,98,42,0)}
+  50%{box-shadow:0 0 0 3px rgba(232,98,42,.35);background:rgba(232,98,42,.2)}
+}
+@keyframes blinkPulseRed{
+  0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,0)}
+  50%{box-shadow:0 0 0 3px rgba(231,76,60,.35);background:rgba(231,76,60,.18)}
+}
+@keyframes blinkPulseBlue{
+  0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0)}
+  50%{box-shadow:0 0 0 3px rgba(59,130,246,.35);background:rgba(59,130,246,.18)}
+}
+.tr-time{font-family:'DM Mono',monospace;color:var(--dim);flex-shrink:0;font-size:9px}
+.tr-icon{flex-shrink:0;display:flex;align-items:center}
+.tr-icon svg{width:10px;height:10px}
+.cam-pov-indicator{
+  position:absolute;top:10px;left:10px;
+  display:none;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:6px;
+  background:rgba(10,10,11,.75);border:1px solid rgba(232,98,42,.3);
+  font-size:10px;color:var(--maple);font-family:'DM Mono',monospace;
+  pointer-events:none;
+}
+.cam-pov-indicator.show{display:flex}
+
+.replay-events{
+  padding:0 18px 14px;flex:1;overflow-y:auto;
+}
+.replay-event{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 0;border-bottom:1px solid var(--border);
+  font-size:11px;color:var(--mid);
+}
+.replay-event:last-child{border-bottom:none}
+.re-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--dim);width:36px;flex-shrink:0}
+.re-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.re-kill{background:rgba(232,98,42,.15);color:var(--maple)}
+.re-death{background:rgba(231,76,60,.15);color:var(--red)}
+.re-event{background:rgba(59,130,246,.15);color:var(--blue)}
+
+/* RECORDING WATERMARK OVERLAY */
+.rec-watermark {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(10,10,11,0.72);
+  border: 1px solid rgba(232,98,42,0.4);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  animation: wmFadeIn .3s ease;
+}
+.rec-watermark.show { display: flex; }
+@keyframes wmFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.wm-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red);
+  animation: lp 1s step-start infinite;
+  flex-shrink: 0;
+}
+.wm-leaf {
+  width: 14px; height: 14px;
+  background: var(--maple);
+  clip-path: polygon(50% 0%,80% 20%,100% 50%,80% 80%,50% 100%,20% 80%,0% 50%,20% 20%);
+  flex-shrink: 0;
+}
+.wm-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.2px;
+}
+.wm-text span { color: var(--maple); }
+.wm-timer {
+  font-size: 10px;
+  color: var(--mid);
+  font-family: 'DM Mono', monospace;
+  margin-left: 2px;
+}
+.wm-note {
+  font-size: 9px;
+  color: var(--dim);
+  border-left: 1px solid var(--border);
+  padding-left: 8px;
+  line-height: 1.4;
+}
+
+/* LOGIN METHOD SELECTOR */
+.login-method-opt{
+  padding:10px 6px;border-radius:9px;border:1px solid var(--border);
+  background:var(--s2);cursor:pointer;text-align:center;transition:all .15s;
+}
+.login-method-opt:hover{border-color:var(--border2);background:var(--s3)}
+.login-method-opt.active{border-color:var(--maple-d);background:var(--maple-g)}
+
+/* CUSTOM CONFIRM DIALOG */
+.cconfirm-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;
+  display:none;align-items:center;justify-content:center;padding:16px;
+  backdrop-filter:blur(4px);
+}
+.cconfirm-bg.show{display:flex}
+.cconfirm-box{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:14px;padding:24px;width:100%;max-width:340px;
+  animation:modalIn .2s ease;
+}
+.cconfirm-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px}
+.cconfirm-msg{font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:20px}
+.cconfirm-btns{display:flex;gap:8px}
+
+/* ── LOADING SCREEN ── */
+.loading-screen{
+  position:fixed;inset:0;background:var(--bg);z-index:2000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.loading-screen.show{opacity:1;pointer-events:all}
+.loading-screen.hide{opacity:0;pointer-events:none}
+
+.ls-leaf-wrap{position:relative;width:64px;height:64px;margin-bottom:24px}
+.ls-leaf{
+  width:64px;height:64px;
+  background:var(--maple);
+  clip-path:polygon(50% 0%,80% 20%,100% 50%,80% 80%,50% 100%,20% 80%,0% 50%,20% 20%);
+  animation:lsLeafSpin 1.2s cubic-bezier(.4,0,.2,1) infinite;
+}
+@keyframes lsLeafSpin{
+  0%{transform:rotate(0deg) scale(1);opacity:1}
+  50%{transform:rotate(180deg) scale(0.85);opacity:0.7}
+  100%{transform:rotate(360deg) scale(1);opacity:1}
+}
+.ls-leaf.success{
+  animation:lsLeafSuccess .5s cubic-bezier(.34,1.56,.64,1) forwards;
+  background:var(--green);
+}
+@keyframes lsLeafSuccess{
+  0%{transform:scale(0.7) rotate(0deg);opacity:0}
+  100%{transform:scale(1) rotate(0deg);opacity:1}
+}
+
+.ls-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:28px;letter-spacing:-.5px}
+.ls-logo span{color:var(--maple)}
+.ls-logo.success-logo span{color:var(--green)}
+
+.ls-steps{display:flex;flex-direction:column;gap:6px;width:220px}
+.ls-step{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  background:var(--s2);border:1px solid var(--border);
+  font-size:11px;color:var(--dim);
+  transition:all .3s;
+}
+.ls-step.active{border-color:var(--maple-d);color:var(--maple);background:var(--maple-g)}
+.ls-step.done{border-color:rgba(46,204,113,.25);color:var(--green);background:rgba(46,204,113,.08)}
+.ls-step-icon{font-size:13px;flex-shrink:0;width:16px;text-align:center}
+.ls-step-spinner{
+  width:12px;height:12px;border:2px solid var(--maple-d);border-top-color:var(--maple);
+  border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ls-success-msg{
+  margin-top:20px;
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+  color:var(--green);letter-spacing:-.3px;
+  opacity:0;transform:translateY(8px);
+  transition:all .4s cubic-bezier(.34,1.2,.64,1);
+}
+.ls-success-msg.show{opacity:1;transform:translateY(0)}
+.ls-success-sub{
+  margin-top:4px;font-size:11px;color:var(--mid);
+  opacity:0;transform:translateY(6px);
+  transition:all .4s cubic-bezier(.34,1.2,.64,1) .1s;
+}
+.ls-success-sub.show{opacity:1;transform:translateY(0)}
+
+.ls-progress{
+  width:220px;height:3px;background:var(--border);border-radius:2px;
+  margin-bottom:20px;overflow:hidden;
+}
+.ls-progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--maple-d),var(--maple));
+  border-radius:2px;width:0%;transition:width .4s ease;
+}
+.ls-progress-fill.green{background:linear-gradient(90deg,#1a7a44,var(--green))}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .topbar{display:flex}
+  .layout{height:calc(100vh - var(--th))}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:160;transform:translateX(-100%);width:260px}
+  .sidebar.open{transform:translateX(0)}
+}
+@media(min-width:769px){
+  .layout{height:100vh}
+  .sidebar{position:relative;transform:none!important}
+  .content{padding:26px 22px}
+  .stats-grid{grid-template-columns:repeat(4,1fr)}
+  .rev-grid{grid-template-columns:repeat(4,1fr)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .two-col>.card{margin-bottom:0}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.383.0/umd/lucide.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="hbg" id="hbg" onclick="toggleSB()"><span></span><span></span><span></span></div>
+  <div class="tb-logo"><div class="leaf"></div>csry<span>.me</span></div>
+  <div class="tb-r">
+    <div class="live-pill"><div class="ldot"></div>live</div>
+    <div class="uav" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--maple),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;cursor:pointer" id="tb-av">RX</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="overlay" id="overlay" onclick="toggleSB()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="logo-leaf"></div>
+      <div class="logo-txt">csry<span>.me</span></div>
+    </div>
+
+    <!-- Always visible -->
+    <div class="nav-sec">
+      <div class="nav-lbl">Player</div>
+      <div class="ni active" id="ni-dashboard" onclick="go('dashboard',this)"><span class="ni-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</div>
+      <div class="ni" id="ni-matches" onclick="go('matches',this)"><span class="ni-icon"><i data-lucide="swords"></i></span>Matches</div>
+      <div class="ni" id="ni-heatmaps" onclick="go('heatmaps',this)"><span class="ni-icon"><i data-lucide="map"></i></span>Heatmaps</div>
+      <div class="ni" id="ni-coaching" onclick="go('coaching',this)"><span class="ni-icon"><i data-lucide="brain"></i></span>AI Coaching</div>
+    </div>
+
+    <!-- Only if in a squad -->
+    <div class="nav-sec" id="nav-squad" style="display:none">
+      <div class="nav-lbl">Squad</div>
+      <div class="ni" id="ni-squad" onclick="go('squad',this)"><span class="ni-icon"><i data-lucide="users"></i></span>Squad Dashboard</div>
+    </div>
+
+    <!-- Always visible -->
+    <div class="nav-sec">
+      <div class="nav-lbl">Account</div>
+      <div class="ni" id="ni-accounts" onclick="go('accounts',this)"><span class="ni-icon"><i data-lucide="link"></i></span>Linked Accounts</div>
+      <div class="ni" id="ni-export" onclick="go('export',this)"><span class="ni-icon"><i data-lucide="download"></i></span>Export Data</div>
+      <div class="ni" id="ni-subscription" onclick="go('subscription',this)"><span class="ni-icon"><i data-lucide="credit-card"></i></span>Subscription</div>
+      <div class="ni" id="ni-security" onclick="go('security',this)"><span class="ni-icon"><i data-lucide="shield"></i></span>Security</div>
+    </div>
+
+    <!-- Only if admin -->
+    <div class="nav-sec" id="nav-admin" style="display:none">
+      <div class="nav-lbl">Admin</div>
+      <div class="ni" id="ni-modqueue" onclick="go('modqueue',this)"><span class="ni-icon"><i data-lucide="alert-triangle"></i></span>Mod Queue <span class="ni-badge" id="mod-count">3</span></div>
+      <div class="ni" id="ni-revenue" onclick="go('revenue',this)"><span class="ni-icon"><i data-lucide="bar-chart-2"></i></span>Revenue</div>
+      <div class="ni" id="ni-apikeys" onclick="go('apikeys',this)"><span class="ni-icon"><i data-lucide="key"></i></span>API Keys</div>
+    </div>
+
+    <div class="sb-bot">
+      <div class="user-card" onclick="go('subscription',document.getElementById('ni-subscription'))">
+        <div class="uav">RX</div>
+        <div style="flex:1;min-width:0">
+          <div class="uname" id="sb-username">RivalPlayer123</div>
+          <div class="utier" id="sb-tier">🍁 Free</div>
+        </div>
+        <span style="font-size:11px;color:var(--dim)">→</span>
+      </div>
+      <div class="wk-bar" id="sb-weekly-wrap">
+        <div class="wk-hdr"><span class="wk-l">Weekly analyses</span><span class="wk-c" id="wk-txt">3 / 5</span></div>
+        <div class="bar-track"><div class="bar-fill" id="wk-bar" style="width:60%"></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="page-hdr">
+        <div class="page-title">Your <span>Dashboard</span></div>
+        <div class="page-sub" id="dash-sub">Season 3 · Week 22</div>
+      </div>
+      <!-- ACTION BUTTONS -->
+      <div class="action-row">
+        <div class="action-btn analyze-btn" id="analyze-btn" onclick="runAnalysis()">
+          <div class="ab-icon"><i data-lucide="flask-conical"></i></div>
+          <div class="ab-label">Analyze Match</div>
+          <div class="ab-sub" id="analyze-sub">Last match · 2h ago</div>
+        </div>
+        <div class="action-btn record-btn" id="record-btn" onclick="toggleRecording()">
+          <div class="ab-icon" id="rec-icon"><i data-lucide="circle-dot"></i></div>
+          <div class="ab-label" id="rec-label">Start Recording</div>
+          <div class="ab-sub" id="rec-sub">csry.me watermark · all tiers</div>
+        </div>
+      </div>
+
+      <div id="dash-upgrade-banner"></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="sl">K/D Ratio</div><div class="sv" style="color:var(--maple)">2.4</div><div class="sd up">↑ +0.3 this week</div></div>
+        <div class="stat-card"><div class="sl">Win Rate</div><div class="sv">68<span style="font-size:14px;color:var(--dim)">%</span></div><div class="sd up">↑ +5% this week</div></div>
+        <div class="stat-card"><div class="sl">Avg Reaction</div><div class="sv">214<span style="font-size:13px;color:var(--dim)">ms</span></div><div class="sd dn">↓ slower vs last wk</div></div>
+        <div class="stat-card"><div class="sl">Matches</div><div class="sv">47</div><div class="sd dm">all time</div></div>
+      </div>
+      <!-- DEMO RECORDINGS -->
+      <div class="card" id="recordings-card">
+        <div class="card-hdr">
+          <div class="card-title">Recordings</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="ctag" id="rec-count-tag">3 SAVED</span>
+            <button class="btn btn-ghost btn-sm" onclick="toggleRecording()" id="rec-dash-btn">
+              <i data-lucide="circle-dot" style="width:11px;height:11px"></i> Record
+            </button>
+          </div>
+        </div>
+        <div class="recordings-grid" id="recordings-grid">
+          <!-- Populated by renderRecordings() -->
+        </div>
+        <div style="font-size:10px;color:var(--dim);text-align:center;padding:4px 0">
+          <i data-lucide="info" style="width:10px;height:10px;vertical-align:middle"></i>
+          csry.me watermark applied to all recordings
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Recent Matches</div><span class="ctag">LAST 7 DAYS</span></div>
+          <div class="match-item" onclick="openModal('modal-match')"><div class="mr win">W</div><div class="mi"><div class="mm">1v1 Duel</div><div class="mt">2 hours ago</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—2</div><div class="mw">Shotgun</div></div></div>
+          <div class="match-item" onclick="openModal('modal-match')"><div class="mr loss">L</div><div class="mi"><div class="mm">3v3 Team</div><div class="mt">5 hours ago</div></div><div class="ms"><div class="mk" style="color:var(--red)">3—5</div><div class="mw">SMG</div></div></div>
+          <div class="match-item" onclick="openModal('modal-match')"><div class="mr win">W</div><div class="mi"><div class="mm">2v2 Duel</div><div class="mt">Yesterday</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—1</div><div class="mw">Rifle</div></div></div>
+          <div class="match-item" onclick="openModal('modal-match')"><div class="mr win">W</div><div class="mi"><div class="mm">1v1 Duel</div><div class="mt">Yesterday</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—3</div><div class="mw">Pistol</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Weapon Usage</div><span class="ctag">ALL TIME</span></div>
+          <div class="wpn-item"><div class="wpn-hdr"><span class="wpn-n">Shotgun</span><span class="wpn-p">42%</span></div><div class="bar-track"><div class="bar-fill" style="width:42%"></div></div></div>
+          <div class="wpn-item"><div class="wpn-hdr"><span class="wpn-n">Rifle</span><span class="wpn-p">31%</span></div><div class="bar-track"><div class="bar-fill" style="width:31%"></div></div></div>
+          <div class="wpn-item"><div class="wpn-hdr"><span class="wpn-n">SMG</span><span class="wpn-p">18%</span></div><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div></div>
+          <div class="wpn-item"><div class="wpn-hdr"><span class="wpn-n">Pistol</span><span class="wpn-p">9%</span></div><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATCHES -->
+    <div class="panel" id="panel-matches">
+      <div class="page-hdr"><div class="page-title">Match <span>History</span></div><div class="page-sub" id="matches-sub">All recorded matches</div></div>
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">All Matches</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-primary btn-sm" onclick="filterMatches('all',this)">All</button>
+            <button class="btn btn-ghost btn-sm" onclick="filterMatches('win',this)">Wins</button>
+            <button class="btn btn-ghost btn-sm" onclick="filterMatches('loss',this)">Losses</button>
+          </div>
+        </div>
+        <div id="matches-list">
+          <div class="match-item" data-r="win" onclick="openModal('modal-match')"><div class="mr win">W</div><div class="mi"><div class="mm">1v1 Duel · Map_01</div><div class="mt">Today 14:32</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—2</div><div class="mw">Shotgun</div></div></div>
+          <div class="match-item" data-r="loss" onclick="openModal('modal-match')"><div class="mr loss">L</div><div class="mi"><div class="mm">3v3 Team · Map_03</div><div class="mt">Today 11:05</div></div><div class="ms"><div class="mk" style="color:var(--red)">3—5</div><div class="mw">SMG</div></div></div>
+          <div class="match-item" data-r="win" onclick="openModal('modal-match')"><div class="mr win">W</div><div class="mi"><div class="mm">2v2 Duel · Map_02</div><div class="mt">Yesterday 20:18</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—1</div><div class="mw">Rifle</div></div></div>
+          <div class="match-item" data-r="win" onclick="openModal('modal-match')"><div class="mr win">W</div><div class="mi"><div class="mm">1v1 Duel · Map_01</div><div class="mt">Yesterday 18:44</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—3</div><div class="mw">Pistol</div></div></div>
+          <div class="match-item" data-r="loss" onclick="openModal('modal-match')"><div class="mr loss">L</div><div class="mi"><div class="mm">5v5 Team · Map_04</div><div class="mt">2 days ago</div></div><div class="ms"><div class="mk" style="color:var(--red)">4—5</div><div class="mw">Shotgun</div></div></div>
+          <div class="match-item" data-r="win" onclick="openModal('modal-match')"><div class="mr win">W</div><div class="mi"><div class="mm">1v1 Duel · Map_02</div><div class="mt">2 days ago</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—0</div><div class="mw">Rifle</div></div></div>
+          <div class="match-item free-locked" data-r="win" onclick="openModal('modal-match')" style="display:none"><div class="mr win">W</div><div class="mi"><div class="mm">1v1 Duel · Map_01</div><div class="mt">7 days ago</div></div><div class="ms"><div class="mk" style="color:var(--green)">5—4</div><div class="mw">Rifle</div></div></div>
+        </div>
+        <div id="matches-limit-note" style="margin-top:12px;font-size:10px;color:var(--dim);text-align:center">Free tier shows last 7 days only. <span style="color:var(--maple);cursor:pointer" onclick="openModal('modal-upgrade')">Upgrade for full history →</span></div>
+      </div>
+    </div>
+
+    <!-- HEATMAPS -->
+    <div class="panel" id="panel-heatmaps">
+      <div class="page-hdr"><div class="page-title">Position <span>Heatmaps</span></div><div class="page-sub">Where you move on each map</div></div>
+      <div id="heatmap-content"></div>
+    </div>
+
+    <!-- COACHING -->
+    <div class="panel" id="panel-coaching">
+      <div class="page-hdr"><div class="page-title">AI <span>Coaching</span></div><div class="page-sub">Csry AI · Last match analysis</div></div>
+      <div id="coaching-limit-banner"></div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Blunders</div><span class="ctag">3 FOUND</span></div>
+        <div class="tip"><div class="ti"><i data-lucide="triangle-alert"></i></div><div class="tt"><strong>Over-peek left corridor:</strong> You peeked 4× without cover — caused 3 of your 5 deaths. Pre-aim before pushing.</div></div>
+        <div class="tip"><div class="ti"><i data-lucide="triangle-alert"></i></div><div class="tt"><strong>Reload timing:</strong> Reloaded twice while enemy was visible. Switch to secondary or wait for cover.</div></div>
+        <div class="tip"><div class="ti"><i data-lucide="triangle-alert"></i></div><div class="tt"><strong>Tilt detected:</strong> After round 3 loss, inputs jumped 40%/sec. Breathe between rounds.</div></div>
+      </div>
+      <div class="card" id="coaching-advanced" style="display:none">
+        <div class="card-hdr"><div class="card-title">Advanced Analysis</div><span class="ctag">PRO</span></div>
+        <div class="tip"><div class="ti"><i data-lucide="chart-bar"></i></div><div class="tt"><strong>Pattern over 10 matches:</strong> You lose 73% of rounds after dying within the first 20 seconds. You're going in too fast early.</div></div>
+        <div class="tip"><div class="ti"><i data-lucide="microscope"></i></div><div class="tt"><strong>Weapon synergy:</strong> Your Shotgun + Pistol combo has a 78% close-range win rate. Your Rifle + SMG combo is only 44%.</div></div>
+        <div class="tip"><div class="ti"><i data-lucide="trending-up"></i></div><div class="tt"><strong>Time-of-day performance:</strong> Your K/D is 2.8 between 6–9pm but drops to 1.6 after 11pm. Play earlier.</div></div>
+      </div>
+      <div class="card" id="coaching-locked" style="">
+        <div class="lock-screen">
+          <div class="lock-icon"><i data-lucide="microscope"></i></div>
+          <div class="lock-title">Advanced Analysis</div>
+          <div class="lock-sub">Pro tier unlocks pattern analysis across matches, weapon synergy insights, and time-of-day performance breakdowns.</div>
+          <button class="btn btn-primary" onclick="openModal('modal-upgrade')">Unlock with Pro</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Strengths</div><span class="ctag">KEEP IT UP</span></div>
+        <div class="tip"><div class="ti"><i data-lucide="circle-check"></i></div><div class="tt"><strong>Shotgun close-range:</strong> Top 15% of all tracked Rivals players.</div></div>
+        <div class="tip"><div class="ti"><i data-lucide="circle-check"></i></div><div class="tt"><strong>Closing rounds:</strong> Faster than 80% of players.</div></div>
+      </div>
+    </div>
+
+    <!-- SQUAD -->
+    <div class="panel" id="panel-squad">
+      <div id="squad-content"></div>
+    </div>
+
+    <!-- LINKED ACCOUNTS -->
+    <div class="panel" id="panel-accounts">
+      <div class="page-hdr"><div class="page-title">Linked <span>Accounts</span></div><div class="page-sub">Connect your accounts to start tracking</div></div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Connected Platforms</div></div>
+        <div class="link-item" id="link-roblox">
+          <div class="ll"><span><i data-lucide="gamepad-2"></i></span>Roblox</div>
+          <div id="roblox-status"></div>
+        </div>
+        <div class="link-item" id="link-discord">
+          <div class="ll"><span><i data-lucide="message-circle"></i></span>Discord</div>
+          <div id="discord-status"></div>
+        </div>
+        <div class="link-item" id="link-google">
+          <div class="ll"><span><i data-lucide="mail"></i></span>Google</div>
+          <div id="google-status"></div>
+        </div>
+      </div>
+      <div class="card" id="roblox-linked-card" style="display:none">
+        <div class="card-hdr"><div class="card-title">Csry Token</div><span class="ctag">SERVER-SIDE</span></div>
+        <div class="info-banner" style="margin-bottom:10px"><p>Your account is securely linked. Csry automatically receives your match data from Rivals — no extra setup needed.</p></div>
+        <button class="btn btn-ghost btn-full" onclick="regenToken()">Regenerate Token</button>
+      </div>
+      <div class="card" id="roblox-unlinked-card">
+        <div class="lock-screen" style="padding:24px">
+          <div class="lock-icon"><i data-lucide="gamepad-2"></i></div>
+          <div class="lock-title">Link Your Roblox Account</div>
+          <div class="lock-sub">Required to collect match data from Rivals.</div>
+          <button class="btn btn-primary" onclick="linkRoblox()">Connect Roblox →</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EXPORT -->
+    <div class="panel" id="panel-export">
+      <div class="page-hdr"><div class="page-title">Export <span>Data</span></div><div class="page-sub">Available on all plans — your data, always</div></div>
+      <div id="export-roblox-warning" style="display:none">
+        <div class="info-banner"><p><i data-lucide="triangle-alert" style="width:12px;height:12px;vertical-align:middle;margin-right:4px"></i>Link your Roblox account first to collect match data before exporting.</p></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Choose Format</div></div>
+        <div class="exp-opt" onclick="exportData('JSON')"><div class="exp-icon"><i data-lucide="braces"></i></div><div><div class="exp-n">JSON</div><div class="exp-d">Raw data for developers</div></div><span class="exp-arr"><i data-lucide="arrow-right" style="width:13px;height:13px"></i></span></div>
+        <div class="exp-opt" onclick="exportData('CSV')"><div class="exp-icon"><i data-lucide="table-2"></i></div><div><div class="exp-n">CSV</div><div class="exp-d">Works in Excel & Sheets</div></div><span class="exp-arr"><i data-lucide="arrow-right" style="width:13px;height:13px"></i></span></div>
+        <div class="exp-opt" onclick="exportData('PDF')"><div class="exp-icon"><i data-lucide="file-text"></i></div><div><div class="exp-n">PDF Report</div><div class="exp-d">Shareable match report</div></div><span class="exp-arr"><i data-lucide="arrow-right" style="width:13px;height:13px"></i></span></div>
+      </div>
+    </div>
+
+    <!-- SUBSCRIPTION -->
+    <div class="panel" id="panel-subscription">
+      <div class="page-hdr"><div class="page-title">Your <span>Plan</span></div><div class="page-sub" id="sub-sub">Choose what works for you</div></div>
+      <div id="sub-content"></div>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="panel" id="panel-security">
+      <div class="page-hdr"><div class="page-title">Security <span>Settings</span></div><div class="page-sub">Keep your account secure</div></div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Two-Factor Auth</div></div>
+        <div class="set-row">
+          <div><div class="set-n">Email verification</div><div class="set-d">you@email.com</div></div>
+          <div class="toggle on" id="toggle-email" onclick="toggleSetting(this,'Email 2FA')"></div>
+        </div>
+        <div class="set-row">
+          <div><div class="set-n">Authenticator app (TOTP)</div><div class="set-d">Google Authenticator, Authy</div></div>
+          <div class="toggle on" id="toggle-totp" onclick="toggleSetting(this,'Authenticator')"></div>
+        </div>
+        <div class="set-row" id="row-sms">
+          <div><div class="set-n">SMS verification</div><div class="set-d" id="sms-desc">Pro & Squad only</div></div>
+          <div class="toggle" id="toggle-sms" onclick="toggleSetting(this,'SMS 2FA')"></div>
+        </div>
+        <div class="set-row" id="row-hw">
+          <div><div class="set-n">Hardware key (YubiKey / Passkey)</div><div class="set-d" id="hw-desc">Squad only</div></div>
+          <div class="toggle" id="toggle-hw" onclick="toggleSetting(this,'Hardware Key')"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Sessions</div></div>
+        <div class="set-row"><div><div class="set-n">Current device</div><div class="set-d">Chrome · Windows · Active now</div></div><span style="font-size:10px;color:var(--green)">● active</span></div>
+        <div class="set-row" id="session-mobile"><div><div class="set-n">Mobile (Safari · iOS)</div><div class="set-d">2 days ago</div></div><button class="btn btn-danger btn-sm" onclick="revokeSession(this)">Revoke</button></div>
+        <div style="margin-top:12px"><button class="btn btn-danger btn-full" onclick="toast('Signed out all devices','red')">Sign out all devices</button></div>
+      </div>
+    </div>
+
+    <!-- MOD QUEUE -->
+    <div class="panel" id="panel-modqueue">
+      <div class="page-hdr"><div class="page-title">Mod <span>Queue</span></div><div class="page-sub">AI flags → human review → ban</div></div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Flagged Players</div><span class="ctag" id="mod-pending">3 PENDING</span></div>
+        <div id="mod-list">
+          <div class="flag-item"><div class="fbadge fhigh">HIGH</div><div class="fi"><div class="fn">SpeedHax99</div><div class="fr">Teleporting · 99% confidence</div></div><div class="fa"><button class="ib ib-ok" onclick="dismissFlag(this)"><i data-lucide="check" style="width:12px;height:12px"></i></button><button class="ib ib-ban" onclick="banPlayer(this,'SpeedHax99')"><i data-lucide="ban" style="width:12px;height:12px"></i></button></div></div>
+          <div class="flag-item"><div class="fbadge fhigh">HIGH</div><div class="fi"><div class="fn">AimB0t_real</div><div class="fr">Inhuman reaction 12ms · 87% confidence</div></div><div class="fa"><button class="ib ib-ok" onclick="dismissFlag(this)"><i data-lucide="check" style="width:12px;height:12px"></i></button><button class="ib ib-ban" onclick="banPlayer(this,'AimB0t_real')"><i data-lucide="ban" style="width:12px;height:12px"></i></button></div></div>
+          <div class="flag-item"><div class="fbadge fmed">MED</div><div class="fi"><div class="fn">sus_player_42</div><div class="fr">Statistical outlier · 61% confidence</div></div><div class="fa"><button class="ib ib-ok" onclick="dismissFlag(this)"><i data-lucide="check" style="width:12px;height:12px"></i></button><button class="ib ib-ban" onclick="banPlayer(this,'sus_player_42')"><i data-lucide="ban" style="width:12px;height:12px"></i></button></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Recent Bans</div><span class="ctag">LAST 7 DAYS</span></div>
+        <div id="ban-log">
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px"><span>WallH4ck3r</span><span style="color:var(--red)">banned · teleport</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:11px"><span>ESP_user_lol</span><span style="color:var(--red)">banned · aim assist</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div class="panel" id="panel-revenue">
+      <div class="page-hdr"><div class="page-title">Revenue <span>Overview</span></div><div class="page-sub">20% auto-donated to Nosniy Games monthly</div></div>
+
+      <!-- Stripe connection card -->
+      <div class="card" id="stripe-card">
+        <div class="card-hdr"><div class="card-title">Payment Provider</div><span class="ctag" id="stripe-status-tag">NOT CONNECTED</span></div>
+        <div id="stripe-unlinked">
+          <div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--s2);border-radius:10px;border:1px solid var(--border);margin-bottom:12px">
+            <div style="flex-shrink:0"><i data-lucide="credit-card" style="width:28px;height:28px;stroke-width:1.5"></i></div>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px">Connect Stripe</div>
+              <div style="font-size:11px;color:var(--mid);line-height:1.5">Link your Stripe account to collect Pro and Squad subscription payments. The 20% Rivals donation is calculated and transferred automatically each month.</div>
+            </div>
+          </div>
+          <div style="margin-bottom:10px">
+            <label class="input-lbl">Stripe Secret Key</label>
+            <input class="input" id="stripe-key-input" type="password" placeholder="sk_live_..." style="font-family:'DM Mono',monospace;letter-spacing:1px"/>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="connectStripe()">Connect Stripe →</button>
+          <div style="font-size:10px;color:var(--dim);text-align:center;margin-top:8px">Your key is stored encrypted server-side. We never log or expose it.</div>
+        </div>
+        <div id="stripe-linked" style="display:none">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(46,204,113,.08);border-radius:10px;border:1px solid rgba(46,204,113,.2);margin-bottom:12px">
+            <div><i data-lucide="credit-card" style="width:24px;height:24px;stroke-width:1.5;color:var(--green)"></i></div>
+            <div style="flex:1">
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--green);margin-bottom:2px">Stripe Connected</div>
+              <div style="font-size:11px;color:var(--mid)" id="stripe-acct-label">acct_maple_demo</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="disconnectStripe()">Disconnect</button>
+          </div>
+          <div style="font-size:11px;color:var(--mid)">Payments are being collected. 20% is automatically calculated and queued for Nosniy Games each billing cycle.</div>
+        </div>
+      </div>
+
+      <!-- Revenue stats — only meaningful once Stripe is connected -->
+      <div id="revenue-stats">
+        <div class="rev-grid">
+          <div class="rev-c"><div class="rev-l">MRR</div><div class="rev-v" id="rev-mrr">$0</div></div>
+          <div class="rev-c"><div class="rev-l">Pro Subs</div><div class="rev-v" id="rev-pro">0</div></div>
+          <div class="rev-c"><div class="rev-l">Squad Subs</div><div class="rev-v" id="rev-squad">0</div></div>
+          <div class="rev-c"><div class="rev-l">To Rivals Devs</div><div class="rev-v" id="rev-rivals" style="color:var(--maple)">$0</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Donation Log</div><span class="ctag">NOSNIY GAMES</span></div>
+          <div id="donation-log" style="font-size:11px;color:var(--dim);text-align:center;padding:20px">No donations yet 🍁</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API KEYS -->
+    <div class="panel" id="panel-apikeys">
+      <div class="page-hdr"><div class="page-title">API <span>Keys</span></div><div class="page-sub">Manage API access for Rivals developers</div></div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Active Keys</div><button class="btn btn-primary btn-sm" onclick="newApiKey()">+ New Key</button></div>
+        <div id="api-key-list">
+          <div class="key-item"><div><div class="key-n">Rivals Dev Key</div><div class="key-v">csry_dev_9f2a4c81...</div></div><button class="btn btn-danger btn-sm" onclick="revokeKey(this)">Revoke</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Rivals Endpoints</div></div>
+        <div style="font-size:10px;color:var(--mid);line-height:2.4;font-family:'DM Mono',monospace">
+          <span style="color:var(--maple)">GET</span>  api.csry.me/v1/player/{id}/stats<br>
+          <span style="color:var(--maple)">GET</span>  api.csry.me/v1/player/{id}/matches<br>
+          <span style="color:var(--maple)">GET</span>  api.csry.me/v1/player/{id}/flags<br>
+          <span style="color:var(--red)">POST</span> api.csry.me/v1/cheating/ban<br>
+          <span style="color:var(--red)">POST</span> api.csry.me/v1/cheating/flag<br>
+          <span style="color:var(--maple)">GET</span>  api.csry.me/v1/cheating/flagged<br>
+          <span style="color:var(--maple)">POST</span> api.csry.me/v1/websocket/on<br>
+          <span style="color:var(--maple)">POST</span> api.csry.me/v1/websocket/off<br>
+          <span style="color:var(--green)">WSS</span>  wss.csry.me
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(139,92,246,.3);background:linear-gradient(135deg,rgba(139,92,246,.05),var(--surface))">
+        <div class="card-hdr">
+          <div class="card-title">Developer API</div>
+          <span class="ctag" style="background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.25)">PUBLIC</span>
+        </div>
+        <div style="font-size:11px;color:var(--mid);margin-bottom:12px;line-height:1.6">
+          For third-party shooting games to query csry.me's cheat detection database.
+          <strong style="color:var(--text)">1,000 requests/month</strong> free. Enterprise includes unlimited.
+        </div>
+        <div style="font-size:10px;color:var(--mid);line-height:2.4;font-family:'DM Mono',monospace;margin-bottom:12px">
+          <span style="color:var(--maple)">GET</span>  api.csry.me/v1/dev/cheaters/{roblox_id}<br>
+          <span style="color:var(--maple)">GET</span>  api.csry.me/v1/dev/cheaters/batch<br>
+          <span style="color:var(--maple)">GET</span>  api.csry.me/v1/dev/flags/{roblox_id}<br>
+          <span style="color:var(--red)">POST</span> api.csry.me/v1/dev/report
+        </div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:10px;font-family:'DM Mono',monospace;color:var(--mid);margin-bottom:12px;line-height:2">
+          <div style="color:var(--dim);margin-bottom:2px">// Example response</div>
+          <span style="color:#a78bfa">{</span><br>
+          &nbsp;&nbsp;<span style="color:var(--maple)">"status"</span>: <span style="color:var(--green)">"flagged"</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--maple)">"confidence"</span>: <span style="color:var(--gold)">87</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--maple)">"flags"</span>: [<span style="color:var(--green)">"teleporting"</span>],<br>
+          &nbsp;&nbsp;<span style="color:var(--maple)">"ban_status"</span>: <span style="color:var(--green)">"none"</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--maple)">"reported_by_games"</span>: <span style="color:var(--gold)">2</span><br>
+          <span style="color:#a78bfa">}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);margin-bottom:10px">
+          <div>
+            <div style="font-size:11px">Monthly usage</div>
+            <div style="font-size:10px;color:var(--dim);margin-top:2px">Free dev tier · resets June 1</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800">234 <span style="font-size:11px;color:var(--dim);font-family:'DM Mono',monospace">/ 1,000</span></div>
+          </div>
+        </div>
+        <button class="btn btn-full" style="background:#7c3aed;color:#fff;border:none" onclick="contactEnterprise()">
+          <i data-lucide="zap" style="width:12px;height:12px"></i> Upgrade for unlimited
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /layout -->
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal-match" onclick="closeModal('modal-match',event)">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('modal-match')"><i data-lucide="x" style="width:13px;height:13px"></i></div>
+    <div class="modal-title">1v1 Duel · Map_01</div>
+    <div class="modal-sub">Today 14:32 · 8m 14s · Win</div>
+    <div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+      <div class="stat-card"><div class="sl">Score</div><div class="sv" style="color:var(--green)">5—2</div></div>
+      <div class="stat-card"><div class="sl">Weapon</div><div class="sv" style="font-size:16px;padding-top:6px">Shotgun</div></div>
+      <div class="stat-card"><div class="sl">Accuracy</div><div class="sv">58<span style="font-size:13px;color:var(--dim)">%</span></div></div>
+      <div class="stat-card"><div class="sl">Reaction</div><div class="sv">198<span style="font-size:13px;color:var(--dim)">ms</span></div></div>
+    </div>
+    <div class="tip" style="margin-bottom:7px"><div class="ti"><i data-lucide="triangle-alert"></i></div><div class="tt"><strong>Blunder:</strong> Over-peeked left corridor twice.</div></div>
+    <div class="tip" style="margin-bottom:14px"><div class="ti"><i data-lucide="circle-check"></i></div><div class="tt"><strong>Strong:</strong> Closed 3 rounds cleanly.</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" style="flex:1" onclick="exportData('PDF')">Export PDF</button>
+      <button class="btn btn-primary" style="flex:1" onclick="closeModal('modal-match')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-upgrade" onclick="closeModal('modal-upgrade',event)">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('modal-upgrade')"><i data-lucide="x" style="width:13px;height:13px"></i></div>
+    <div class="modal-title">Upgrade to Pro 🍁</div>
+    <div class="modal-sub">Unlimited analyses, heatmaps & advanced coaching</div>
+    <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--maple);margin-bottom:14px">$5<small style="font-size:14px;color:var(--dim);font-family:'DM Mono',monospace">/mo</small></div>
+    <div class="trial-banner" style="margin-bottom:14px"><div class="trial-icon"><i data-lucide="gift"></i></div><div class="trial-txt">Start with a <strong>7-day free trial</strong> — no card needed</div></div>
+    <div class="plan-feats" style="font-size:11px;color:var(--mid);line-height:2;margin-bottom:16px">✓ Unlimited analyses<br>✓ Full match history<br>✓ Heatmaps<br>✓ Advanced AI coaching<br>✓ Priority queue<br>✓ Data export</div>
+    <button class="btn btn-primary btn-full" onclick="startTrial('pro');closeModal('modal-upgrade')">Start 7-Day Free Trial</button>
+    <div style="font-size:10px;color:var(--dim);text-align:center;margin-top:8px">20% of revenue supports Rivals devs 🍁</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-create-member" onclick="closeModal('modal-create-member',event)">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('modal-create-member')"><i data-lucide="x" style="width:13px;height:13px"></i></div>
+    <div class="modal-title">Create Squad Account</div>
+    <div class="modal-sub">You control this account. Cancelled plan = terminated account.</div>
+
+    <!-- Name + Username -->
+    <label class="input-lbl">Display Name</label>
+    <input class="input" id="create-name-input" placeholder="e.g. Player5"/>
+    <label class="input-lbl">Username</label>
+    <input class="input" id="create-user-input" placeholder="e.g. novasquad_p5"/>
+    <label class="input-lbl">Role</label>
+    <select class="input" id="create-role-input" style="cursor:pointer">
+      <option value="member">Member</option>
+      <option value="coach">Coach (view only)</option>
+    </select>
+
+    <!-- Login method selector -->
+    <label class="input-lbl" style="margin-top:4px">Login Method</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px">
+      <div class="login-method-opt active" id="lm-password" onclick="selectLoginMethod('password')">
+        <div style="margin-bottom:6px"><i data-lucide="key-round" style="width:20px;height:20px"></i></div>
+        <div style="font-size:10px;font-weight:700;color:var(--text)">Password</div>
+        <div style="font-size:9px;color:var(--dim)">Email + pass</div>
+      </div>
+      <div class="login-method-opt" id="lm-google" onclick="selectLoginMethod('google')">
+        <div style="margin-bottom:6px"><i data-lucide="chrome" style="width:20px;height:20px"></i></div>
+        <div style="font-size:10px;font-weight:700;color:var(--text)">Google</div>
+        <div style="font-size:9px;color:var(--dim)">Workspace SSO</div>
+      </div>
+      <div class="login-method-opt" id="lm-cloudflare" onclick="selectLoginMethod('cloudflare')">
+        <div style="margin-bottom:6px"><i data-lucide="cloud" style="width:20px;height:20px"></i></div>
+        <div style="font-size:10px;font-weight:700;color:var(--text)">Cloudflare</div>
+        <div style="font-size:9px;color:var(--dim)">Zero Trust</div>
+      </div>
+    </div>
+
+    <!-- Password fields (shown when method = password) -->
+    <div id="lm-fields-password">
+      <label class="input-lbl">Email</label>
+      <input class="input" id="create-email-input" type="email" placeholder="player@yourteam.com"/>
+      <label class="input-lbl">Password</label>
+      <input class="input" id="create-pass-input" type="password" placeholder="Min 8 characters"/>
+    </div>
+
+    <!-- Google Workspace fields -->
+    <div id="lm-fields-google" style="display:none">
+      <div style="font-size:11px;color:var(--mid);padding:10px;background:var(--s2);border-radius:8px;border:1px solid var(--border);line-height:1.6">
+        Member will sign in via <strong style="color:var(--text)">Google Workspace</strong> using your connected org (<span id="google-org-label">not connected</span>).
+        Connect your org first in the Squad Dashboard under Workspace / SSO.
+      </div>
+    </div>
+
+    <!-- Cloudflare Access fields -->
+    <div id="lm-fields-cloudflare" style="display:none">
+      <div style="font-size:11px;color:var(--mid);padding:10px;background:var(--s2);border-radius:8px;border:1px solid var(--border);line-height:1.6">
+        Member will sign in via <strong style="color:var(--text)">Cloudflare Access</strong> using your Zero Trust policy (<span id="cf-org-label">not connected</span>).
+        Configure Cloudflare first in the Squad Dashboard under Workspace / SSO.
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <button class="btn btn-primary btn-full" onclick="createSquadMember()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECORDING WATERMARK -->
+<div class="rec-watermark" id="rec-watermark">
+  <div class="wm-dot"></div>
+  <div class="wm-leaf"></div>
+  <div class="wm-text">csry<span>.me</span></div>
+  <div class="wm-timer" id="wm-timer">00:00</div>
+  <div class="wm-note">Recording<br>watermarked</div>
+</div>
+
+<!-- REPLAY MODAL -->
+<div class="replay-bg" id="replay-bg" onclick="closeReplay(event)">
+  <div class="replay-modal" id="replay-modal">
+    <div class="replay-header">
+      <div>
+        <div class="replay-title" id="replay-title">1v1 Duel · Map_01</div>
+        <div class="replay-meta" id="replay-meta">Win · 5-2 · Shotgun · 08:14</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="runAnalysisFromReplay()" id="replay-analyze-btn">
+          <i data-lucide="brain" style="width:11px;height:11px"></i> Analyze
+        </button>
+        <div class="modal-close" onclick="closeReplay()" style="position:relative;top:auto;right:auto">
+          <i data-lucide="x" style="width:13px;height:13px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="replay-canvas-wrap">
+      <canvas id="replay-canvas"></canvas>
+      <!-- faint watermark bottom-left -->
+      <div class="replay-wm">
+        <div class="replay-wm-leaf"></div>
+        <div class="replay-wm-txt">csry.me</div>
+      </div>
+      <!-- POV mode indicator -->
+      <div class="cam-pov-indicator" id="pov-indicator">
+        <i data-lucide="eye" style="width:11px;height:11px"></i> POV Mode
+      </div>
+    </div>
+
+    <div class="replay-controls">
+      <button class="btn btn-ghost btn-sm" id="replay-play-btn" onclick="toggleReplayPlay()" style="padding:5px 8px">
+        <i data-lucide="play" id="replay-play-icon" style="width:13px;height:13px"></i>
+      </button>
+      <div class="replay-scrubber" id="replay-scrubber" onclick="scrubReplay(event)">
+        <div class="replay-progress" id="replay-progress"></div>
+      </div>
+      <div class="replay-time" id="replay-time">0:00 / 8:14</div>
+      <!-- Camera mode toggle -->
+      <button class="btn btn-ghost btn-sm" id="cam-toggle-btn" onclick="toggleCameraMode()" title="Switch camera" style="padding:5px 10px;gap:5px;white-space:nowrap">
+        <i data-lucide="eye" id="cam-toggle-icon" style="width:12px;height:12px"></i>
+        <span id="cam-toggle-label">Bird's Eye</span>
+      </button>
+    </div>
+
+    <div class="replay-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--maple)"></div>You</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Opponent</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(232,98,42,.3);border:1px solid var(--maple)"></div>Kill</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(231,76,60,.3);border:1px solid var(--red)"></div>Death</div>
+      <div class="legend-item" style="margin-left:auto;opacity:.4">
+        <div class="replay-wm-leaf" style="width:10px;height:10px;background:var(--mid)"></div>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:10px">csry.me</span>
+      </div>
+    </div>
+
+    <!-- Live Transcript -->
+    <div style="border-top:1px solid var(--border);padding:10px 18px 0">
+      <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+        <i data-lucide="scroll-text" style="width:12px;height:12px"></i> Transcript
+        <span style="font-size:9px;color:var(--dim);font-family:'DM Mono',monospace;font-weight:400">live events</span>
+      </div>
+      <div id="replay-transcript" style="height:90px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding-bottom:8px"></div>
+    </div>
+
+    <div class="replay-events" id="replay-events"></div>
+  </div>
+</div>
+
+<div class="toast-area" id="toast-area"></div>
+
+<!-- CUSTOM CONFIRM DIALOG -->
+<div class="cconfirm-bg" id="cconfirm-bg">
+  <div class="cconfirm-box">
+    <div class="cconfirm-title" id="cconfirm-title"></div>
+    <div class="cconfirm-msg" id="cconfirm-msg"></div>
+    <div class="cconfirm-btns">
+      <button class="btn btn-ghost" style="flex:1" id="cconfirm-cancel">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" id="cconfirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div class="loading-screen" id="loading-screen">
+  <div class="ls-logo" id="ls-logo">csry<span>.me</span></div>
+  <div class="ls-leaf-wrap"><div class="ls-leaf" id="ls-leaf"></div></div>
+  <div class="ls-progress"><div class="ls-progress-fill" id="ls-progress-fill"></div></div>
+  <div class="ls-steps" id="ls-steps">
+    <div class="ls-step" id="ls-step-1"><span class="ls-step-icon"><i data-lucide="lock-keyhole" style="width:13px;height:13px"></i></span>Verifying account</div>
+    <div class="ls-step" id="ls-step-2"><span class="ls-step-icon"><i data-lucide="sparkles" style="width:13px;height:13px"></i></span>Activating trial</div>
+    <div class="ls-step" id="ls-step-3"><span class="ls-step-icon"><i data-lucide="zap" style="width:13px;height:13px"></i></span>Unlocking features</div>
+    <div class="ls-step" id="ls-step-4"><span class="ls-step-icon"><i data-lucide="mail" style="width:13px;height:13px"></i></span>Sending confirmation</div>
+  </div>
+  <div class="ls-success-msg" id="ls-success-msg">Trial activated!</div>
+  <div class="ls-success-sub" id="ls-success-sub"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// SESSION STATE — persists for this browser session
+// ═══════════════════════════════════════════
+const S = {
+  tier: 'free',           // 'free' | 'pro_trial' | 'pro' | 'squad_trial' | 'squad'
+  isAdmin: true,
+  inSquad: false,
+  robloxLinked: false,
+  discordLinked: true,
+  googleLinked: false,
+  modCount: 3,
+  analysesUsed: 3,
+  analysesMax: 5,
+  trialDaysLeft: null,
+  toggles: { email: true, totp: true, sms: false, hw: false },
+  squadMembers: [
+    { initials:'RX', color:'linear-gradient(135deg,#e8622a,#f0a500)', name:'RivalPlayer123', role:'owner', kd:'2.4', wr:'68%', main:'Shotgun', managed:false },
+    { initials:'KZ', color:'linear-gradient(135deg,#3b82f6,#8b5cf6)', name:'KazeRunner', role:'member', kd:'2.1', wr:'72%', main:'Rifle', managed:true },
+    { initials:'NX', color:'linear-gradient(135deg,#8b5cf6,#ec4899)', name:'NovaStar', role:'member', kd:'1.8', wr:'65%', main:'SMG', managed:true },
+    { initials:'FS', color:'linear-gradient(135deg,#2ecc71,#3b82f6)', name:'FastShot99', role:'member', kd:'2.6', wr:'70%', main:'Pistol', managed:true },
+  ],
+  selectedMember: null,
+  squadFlags: [
+    { level:'HIGH', cls:'fhigh', name:'SpeedHax99', reason:'Teleporting · 99% confidence' },
+    { level:'MED', cls:'fmed', name:'sus_player_42', reason:'Statistical outlier · 61% confidence' },
+  ],
+  banLog: [],
+  recordings: [
+    { id:1, mode:'1v1 Duel', map:'Map_01', result:'W', score:'5-2', weapon:'Shotgun', dur:'08:14', ago:'2h ago', kd:'2.5', analyzed:true },
+    { id:2, mode:'3v3 Team', map:'Map_03', result:'L', score:'3-5', weapon:'SMG',     dur:'08:03', ago:'5h ago', kd:'0.6', analyzed:false },
+    { id:3, mode:'2v2 Duel', map:'Map_02', result:'W', score:'5-1', weapon:'Rifle',   dur:'08:47', ago:'Yesterday', kd:'5.0', analyzed:true },
+  ],
+  stripeConnected: false,
+  stripeAccount: '',
+  ssoLinked: false,
+  ssoProvider: '',
+  ssoEmail: '',
+};
+
+// ═══════════════════════════════════════════
+// TIER HELPERS
+// ═══════════════════════════════════════════
+const isPro = () => ['pro_trial','pro','squad_trial','squad','enterprise_trial','enterprise'].includes(S.tier);
+const isSquad = () => ['squad_trial','squad','enterprise_trial','enterprise'].includes(S.tier);
+const isEnterprise = () => ['enterprise_trial','enterprise'].includes(S.tier);
+const tierLabel = () => {
+  const map = {free:'🍁 Free',pro_trial:'🍁 Pro Trial',pro:'🍁 Pro',squad_trial:'🍁 Squad Trial',squad:'🍁 Squad',enterprise_trial:'⬡ Enterprise Trial',enterprise:'⬡ Enterprise'};
+  return map[S.tier] || '🍁 Free';
+};
+
+// ═══════════════════════════════════════════
+// RENDER SIDEBAR based on state
+// ═══════════════════════════════════════════
+function renderSidebar() {
+  // Squad section: show when on squad tier
+  document.getElementById('nav-squad').style.display = isSquad() ? '' : 'none';
+  // Admin section: only if admin
+  document.getElementById('nav-admin').style.display = S.isAdmin ? '' : 'none';
+
+  // User card
+  document.getElementById('sb-tier').textContent = tierLabel();
+
+  // Weekly bar
+  const wkWrap = document.getElementById('sb-weekly-wrap');
+  const wkBar = document.getElementById('wk-bar');
+  if (isPro()) {
+    document.getElementById('wk-txt').textContent = '∞ / ∞';
+    if (wkBar) { wkBar.classList.add('animated'); wkBar.style.width = '100%'; wkBar.style.background = 'var(--green)'; }
+  } else {
+    document.getElementById('wk-txt').textContent = S.analysesUsed + ' / ' + S.analysesMax;
+    if (wkBar) { wkBar.classList.add('animated'); wkBar.style.width = ((S.analysesUsed/S.analysesMax)*100) + '%'; wkBar.style.background = ''; }
+  }
+
+  // Mod badge
+  const badge = document.getElementById('mod-count');
+  if (badge) { badge.textContent = S.modCount; badge.style.display = S.modCount > 0 ? '' : 'none'; }
+}
+
+// ═══════════════════════════════════════════
+// RENDER PANELS based on state
+// ═══════════════════════════════════════════
+
+function renderDashboard() {
+  const banner = document.getElementById('dash-upgrade-banner');
+  if (isPro()) {
+    banner.innerHTML = '';
+  } else if (S.analysesUsed >= S.analysesMax) {
+    banner.innerHTML = `<div class="up-banner"><div class="up-txt">You've used all <strong>${S.analysesMax} analyses</strong> this week. Upgrade to Pro for unlimited access.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="openModal('modal-upgrade')">Upgrade to Pro →</button><button class="btn btn-ghost" onclick="openModal('modal-trial-modal')">Free Trial</button></div></div>`;
+  } else {
+    const left = S.analysesMax - S.analysesUsed;
+    banner.innerHTML = `<div class="up-banner"><div class="up-txt">You have <strong>${left} ${left===1?'analysis':'analyses'} remaining</strong> this week. Upgrade for unlimited access.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" onclick="openModal('modal-upgrade')">Upgrade to Pro →</button><button class="btn btn-ghost" onclick="startTrialFlow()">Start Free Trial</button></div></div>`;
+  }
+  if (S.trialDaysLeft !== null) {
+    banner.innerHTML = `<div class="trial-banner"><div class="trial-icon"><i data-lucide="timer"></i></div><div class="trial-txt">Your <strong>${tierLabel()} trial</strong> has <strong>${S.trialDaysLeft} days left</strong>. Add a card to keep access after.</div></div>` + banner.innerHTML;
+  }
+}
+
+function renderHeatmaps() {
+  const el = document.getElementById('heatmap-content');
+  if (isPro()) {
+    el.innerHTML = `
+      <div class="card"><div class="card-hdr"><div class="card-title">Map_01 · Last Match</div><span class="ctag">MOVEMENT</span></div>
+        <div class="hm-wrap"><div class="hm-grid" id="hm1"></div><div class="hm-lbl">DENSITY</div></div></div>
+      <div class="card"><div class="card-hdr"><div class="card-title">Map_03 · Last Match</div><span class="ctag">MOVEMENT</span></div>
+        <div class="hm-wrap"><div class="hm-grid" id="hm2"></div><div class="hm-lbl">DENSITY</div></div></div>`;
+    buildHM('hm1',[[3,4],[4,5],[10,5],[16,3],[7,8]]);
+    buildHM('hm2',[[2,2],[8,5],[14,7],[5,8],[18,3]]);
+  } else {
+    el.innerHTML = `
+      <div class="card"><div class="card-hdr"><div class="card-title">Map_01 · Last Match</div><span class="ctag">PRO</span></div>
+        <div class="hm-wrap"><div class="hm-grid" id="hm1"></div><div class="hm-lbl">DENSITY</div>
+          <div class="hm-lock"><div style="font-size:22px">🔒</div><div style="font-size:11px;color:var(--mid)">Pro feature</div><button class="btn btn-primary btn-sm" onclick="openModal('modal-upgrade')">Upgrade</button></div>
+        </div></div>
+      <div class="card"><div class="card-hdr"><div class="card-title">Map_03 · Last Match</div><span class="ctag">PRO</span></div>
+        <div class="hm-wrap"><div class="hm-grid" id="hm2"></div><div class="hm-lbl">DENSITY</div>
+          <div class="hm-lock"><div style="font-size:22px">🔒</div><div style="font-size:11px;color:var(--mid)">Pro feature</div><button class="btn btn-primary btn-sm" onclick="openModal('modal-upgrade')">Upgrade</button></div>
+        </div></div>`;
+    buildHM('hm1',[[3,4],[4,5],[10,5],[16,3],[7,8]]);
+    buildHM('hm2',[[2,2],[8,5],[14,7],[5,8],[18,3]]);
+  }
+}
+
+function renderCoaching() {
+  const adv = document.getElementById('coaching-advanced');
+  const locked = document.getElementById('coaching-locked');
+  if (adv && locked) {
+    adv.style.display = isPro() ? '' : 'none';
+    locked.style.display = isPro() ? 'none' : '';
+  }
+}
+
+function renderMatches() {
+  const note = document.getElementById('matches-limit-note');
+  if (note) note.style.display = isPro() ? 'none' : '';
+  document.querySelectorAll('.free-locked').forEach(el => {
+    el.style.display = isPro() ? 'flex' : 'none';
+  });
+}
+
+function renderSquad() {
+  const el = document.getElementById('squad-content');
+  if (!isSquad()) {
+    el.innerHTML = `
+      <div class="page-hdr"><div class="page-title">Squad <span>Dashboard</span></div></div>
+      <div class="card"><div class="lock-screen">
+        <div class="lock-icon"><i data-lucide="users"></i></div>
+        <div class="lock-title">Squad Tier Required</div>
+        <div class="lock-sub">Upgrade to Squad to access team stats, shared mod dashboard, and custom SSO.</div>
+        <button class="btn btn-primary" onclick="openModal('modal-upgrade')">Upgrade to Squad →</button>
+      </div></div>`;
+    return;
+  }
+
+  const MAX_BASE = 10;
+  const EXTRA_COST = 4;
+  const extraMembers = Math.max(0, S.squadMembers.length - MAX_BASE);
+  const extraCost = extraMembers * EXTRA_COST;
+
+  // Member rows — clickable to view stats
+  const memberHTML = S.squadMembers.map((m, idx) => `
+    <div class="squad-member" onclick="viewMemberStats(${idx})" style="cursor:pointer">
+      <div class="sm-av" style="background:${m.color}">${m.initials}</div>
+      <div class="sm-info">
+        <div class="sm-name">
+          ${m.name}
+          <span class="role-badge role-${m.role}">${m.role}</span>
+          ${m.managed ? '<span class="role-badge" style="background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.25);margin-left:4px">squad account</span>' : ''}
+          ${idx >= MAX_BASE ? '<span class="role-badge" style="background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.25);margin-left:4px">+$4/mo</span>' : ''}
+        </div>
+        <div class="sm-stats">K/D ${m.kd} · ${m.wr} WR · ${m.main} main</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="sm-kd" style="color:${parseFloat(m.kd)>=2?'var(--green)':'var(--mid)'}">${m.kd}</div>
+        ${m.managed ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();removeSquadMember(${idx})" title="Remove"><i data-lucide="x" style="width:11px;height:11px"></i></button>` : ''}
+      </div>
+    </div>`).join('');
+
+  const memberCaption = extraMembers > 0
+    ? `<div style="font-size:10px;color:var(--gold);text-align:center;padding:8px 0;border-top:1px solid var(--border);margin-top:4px">+${extraMembers} extra · +$${extraCost}/mo on your bill</div>`
+    : `<div style="font-size:10px;color:var(--dim);text-align:center;padding:8px 0;border-top:1px solid var(--border);margin-top:4px">${S.squadMembers.length} / ${MAX_BASE} slots used · $4/mo per additional</div>`;
+
+  const flagHTML = S.squadFlags.length ? S.squadFlags.map((f,i) => `
+    <div class="flag-item" id="sflag-${i}">
+      <div class="fbadge ${f.cls}">${f.level}</div>
+      <div class="fi">
+        <div class="fn">${f.name}</div>
+        <div class="fr">${f.reason}</div>
+      </div>
+      <div class="fa">
+        <button class="ib ib-ok" onclick="dismissSquadFlag(${i})" title="Dismiss">✓</button>
+        <button class="ib ib-ban" onclick="banFromSquad(${i},'${f.name}')" title="Remove from squad + report to Rivals"><i data-lucide="ban" style="width:12px;height:12px"></i></button>
+      </div>
+    </div>`).join('') : `<div style="font-size:11px;color:var(--dim);text-align:center;padding:16px">No flagged players 🎉</div>`;
+
+  el.innerHTML = `
+    <div class="page-hdr">
+      <div class="page-title">Squad <span>Dashboard</span></div>
+      <div class="page-sub">NovaSquad · ${S.squadMembers.length} members</div>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:1fr 1fr">
+      <div class="stat-card"><div class="sl">Squad W/R</div><div class="sv" style="color:var(--maple)">71<span style="font-size:14px;color:var(--dim)">%</span></div><div class="sd up">↑ +3% this week</div></div>
+      <div class="stat-card"><div class="sl">Squad Matches</div><div class="sv">128</div><div class="sd dm">all time</div></div>
+      <div class="stat-card"><div class="sl">Avg K/D</div><div class="sv">2.1</div><div class="sd up">↑ improving</div></div>
+      <div class="stat-card"><div class="sl">Best Duo</div><div class="sv" style="font-size:14px;padding-top:4px">RX+KZ</div><div class="sd" style="color:var(--maple)">74% duo WR</div></div>
+    </div>
+
+    <!-- Members -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Members</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;color:var(--dim)">${S.squadMembers.length}/${MAX_BASE}${extraMembers>0?' +'+extraMembers:''}</span>
+          <button class="btn btn-sm" id="create-account-btn"
+            style="${((S.tier==='squad_trial'||S.tier==='enterprise_trial')&&S.squadMembers.length>=10)?'background:var(--border);color:var(--dim);cursor:not-allowed':'background:var(--maple);color:#fff'}"
+            onclick="openModal('modal-create-member')">
+            + Create Account${((S.tier==='squad_trial'||S.tier==='enterprise_trial')&&S.squadMembers.length>=10)?' (trial limit)':''}
+          </button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--dim);padding:6px 0 10px;border-bottom:1px solid var(--border);margin-bottom:8px">
+        Squad accounts are created and managed by you. They can only link Roblox for match data — no Google or Discord. If your Squad plan is cancelled, all squad accounts are terminated.
+      </div>
+      ${memberHTML}
+      ${memberCaption}
+    </div>
+
+    <!-- Mod Queue -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Mod Queue</div>
+        <span class="ctag">SQUAD BANS ONLY</span>
+      </div>
+      <div style="font-size:10px;color:var(--dim);padding:4px 0 10px">
+        Banning removes the player from your squad and reports them to Rivals moderators. It does not globally ban them on Csry.
+      </div>
+      <div id="squad-flags">${flagHTML}</div>
+    </div>
+
+    <!-- Custom SSO — dynamic, rendered by renderSquadSSO() -->
+    <div class="card" id="squad-sso-card">
+      <div class="card-hdr">
+        <div class="card-title">Squad Workspace / SSO</div>
+        <span class="ctag" id="squad-sso-tag">NOT CONNECTED</span>
+      </div>
+      <div style="font-size:11px;color:var(--mid);margin-bottom:12px;line-height:1.6">Choose how your managed squad accounts sign in. This replaces individual logins — members use your org credentials, not personal accounts.</div>
+      <div id="squad-sso-content"></div>
+    </div>`;
+  setTimeout(renderSquadSSO, 0);
+}
+
+function viewMemberStats(idx) {
+  const m = S.squadMembers[idx];
+  let modal = document.getElementById('modal-member-stats');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modal-member-stats';
+    modal.className = 'modal-bg';
+    modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('show'); };
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="modal-close" onclick="document.getElementById('modal-member-stats').classList.remove('show')"><i data-lucide="x" style="width:13px;height:13px"></i></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div class="sm-av" style="background:${m.color};width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${m.initials}</div>
+        <div>
+          <div class="modal-title" style="margin-bottom:2px">${m.name}</div>
+          <div style="font-size:10px;color:var(--dim)">${m.role} · ${m.managed ? 'Squad account · ' + (m.loginMethod === 'google' ? 'Google SSO' : m.loginMethod === 'cloudflare' ? 'Cloudflare SSO' : 'email/password') : 'Owner'} · ${m.main} main</div>
+        </div>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+        <div class="stat-card"><div class="sl">K/D</div><div class="sv" style="color:var(--maple)">${m.kd}</div></div>
+        <div class="stat-card"><div class="sl">Win Rate</div><div class="sv">${m.wr}</div></div>
+        <div class="stat-card"><div class="sl">Main Weapon</div><div class="sv" style="font-size:14px;padding-top:4px">${m.main}</div></div>
+        <div class="stat-card"><div class="sl">Matches</div><div class="sv">${Math.floor(Math.random()*30)+10}</div></div>
+      </div>
+      <div class="card-hdr" style="margin-bottom:8px"><div class="card-title">Recent Performance</div></div>
+      <div class="tip" style="margin-bottom:6px"><div class="ti"><i data-lucide="trending-up"></i></div><div class="tt"><strong>Win streak:</strong> 3 wins in a row this week.</div></div>
+      <div class="tip" style="margin-bottom:14px"><div class="ti"><i data-lucide="triangle-alert"></i></div><div class="tt"><strong>Weak point:</strong> Accuracy drops when moving — 31%.</div></div>
+      ${m.managed ? `
+        <div style="margin-bottom:10px">
+          <div class="card-hdr" style="margin-bottom:8px"><div class="card-title">Roblox Link</div></div>
+          ${m.robloxLinked
+            ? '<div class="link-item"><div class="ll"><span><i data-lucide="gamepad-2"></i></span>Roblox</div><span class="linked" style="font-size:10px">● linked</span></div>'
+            : '<div class="link-item"><div class="ll"><span><i data-lucide="gamepad-2"></i></span>Roblox — not linked</div><button class="btn btn-primary btn-sm" onclick="linkSquadMemberRoblox(' + idx + ')">Link via WSS</button></div>'
+          }
+          <div style="font-size:10px;color:var(--dim);margin-top:6px">Squad accounts can only link Roblox. Google and Discord are not available.</div>
+        </div>
+        <button class="btn btn-danger btn-full" onclick="removeSquadMember(${idx});document.getElementById('modal-member-stats').classList.remove('show')">Remove from Squad</button>
+      ` : ''}
+    </div>`;
+  modal.classList.add('show');
+}
+
+function removeSquadMember(idx) {
+  const m = S.squadMembers[idx];
+  cconfirm(
+    'Remove ' + m.name + '?',
+    'Their squad account will be permanently terminated.',
+    'Remove',
+    function() {
+      S.squadMembers.splice(idx, 1);
+      renderSquad();
+  renderSquadSSO();
+      toast(m.name + ' removed — account terminated', 'red');
+    }
+  );
+}
+
+function banFromSquad(i, name) {
+  S.squadFlags.splice(i, 1);
+  // Also remove from members if they're in there
+  const mIdx = S.squadMembers.findIndex(m => m.name === name);
+  if (mIdx > -1) S.squadMembers.splice(mIdx, 1);
+  renderSquad();
+  toast(name + ' removed from squad + reported to Rivals mods', 'red');
+  // Show followup info
+  setTimeout(function() { toast('Rivals mod team notified — they will review the report', 'maple'); }, 1200);
+}
+
+function renderAccounts() {
+  // Roblox
+  const rs = document.getElementById('roblox-status');
+  const rc = document.getElementById('roblox-linked-card');
+  const ru = document.getElementById('roblox-unlinked-card');
+  if (S.robloxLinked) {
+    rs.innerHTML = '<span class="linked" style="font-size:10px">● linked</span>';
+    rc.style.display = '';
+    ru.style.display = 'none';
+  } else {
+    rs.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><span class="unlinked" style="font-size:10px">not linked</span><button class="btn btn-ghost btn-sm" onclick="linkRoblox()">Connect</button></div>';
+    rc.style.display = 'none';
+    ru.style.display = '';
+  }
+  // Discord
+  const ds = document.getElementById('discord-status');
+  ds.innerHTML = S.discordLinked ? '<span class="linked" style="font-size:10px">● linked</span>' : '<button class="btn btn-ghost btn-sm" onclick="linkDiscord()">Connect</button>';
+  // Google
+  const gs = document.getElementById('google-status');
+  gs.innerHTML = S.googleLinked ? '<span class="linked" style="font-size:10px">● linked</span>' : '<div style="display:flex;align-items:center;gap:8px"><span class="unlinked" style="font-size:10px">not linked</span><button class="btn btn-ghost btn-sm" onclick="linkGoogle()">Connect</button></div>';
+  // Export warning
+  document.getElementById('export-roblox-warning').style.display = S.robloxLinked ? 'none' : '';
+
+}  // end renderAccounts
+
+function renderSquadSSO() {
+  var tag = document.getElementById('squad-sso-tag');
+  var container = document.getElementById('squad-sso-content');
+  if (!tag || !container) return;
+
+  container.innerHTML = '';
+
+  if (S.ssoLinked) {
+    tag.textContent = 'CONNECTED';
+    tag.style.cssText = 'background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.25)';
+
+    var provName = S.ssoProvider === 'google' ? 'Google Workspace' : 'Cloudflare Access';
+    var provLucide = S.ssoProvider === 'google' ? 'chrome' : 'cloud';
+
+    var connRow = document.createElement('div');
+    connRow.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;background:rgba(46,204,113,.08);border-radius:10px;border:1px solid rgba(46,204,113,.2);margin-bottom:10px';
+    connRow.innerHTML = '<div style="display:flex;align-items:center"><i data-lucide="' + provLucide + '" style="width:22px;height:22px;color:var(--green)"></i></div>'
+      + '<div style="flex:1"><div style="font-weight:700;color:var(--green);font-size:13px;margin-bottom:2px">' + provName + ' Connected</div>'
+      + '<div style="font-size:11px;color:var(--mid)">' + S.ssoEmail + '</div></div>';
+    var discBtn = document.createElement('button');
+    discBtn.className = 'btn btn-danger btn-sm';
+    discBtn.textContent = 'Disconnect';
+    discBtn.onclick = unlinkSSO;
+    connRow.appendChild(discBtn);
+    container.appendChild(connRow);
+
+    var note = document.createElement('div');
+    note.style.cssText = 'font-size:11px;color:var(--mid);line-height:1.5';
+    note.textContent = 'Squad members sign in via this workspace. Personal account linking (Google, Discord) is not available to squad accounts.';
+    container.appendChild(note);
+  } else {
+    tag.textContent = 'NOT CONNECTED';
+    tag.style.cssText = '';
+
+    var orgNote = document.createElement('div');
+    orgNote.style.cssText = 'font-size:11px;color:var(--dim);padding:8px 10px;background:var(--s2);border-radius:7px;border:1px solid var(--border);margin-bottom:10px;line-height:1.6';
+    orgNote.textContent = 'Connect your organisation. Managed squad accounts will sign in using these credentials — no personal Google or Discord accounts needed or allowed.';
+    container.appendChild(orgNote);
+
+    var opts = [
+      { id: 'google', lucide: 'chrome', name: 'Google Workspace', desc: 'Squad signs in via your Google org domain' },
+      { id: 'cloudflare', lucide: 'cloud', name: 'Cloudflare Access', desc: 'Use Cloudflare Zero Trust for squad auth' },
+    ];
+    opts.forEach(function(opt) {
+      var row = document.createElement('div');
+      row.className = 'exp-opt';
+      row.style.marginBottom = '8px';
+      row.innerHTML = '<div class="exp-icon"><i data-lucide="' + opt.lucide + '"></i></div>'
+        + '<div style="flex:1"><div class="exp-n">' + opt.name + '</div><div class="exp-d">' + opt.desc + '</div></div>'
+        + '<i data-lucide="arrow-right" style="width:13px;height:13px;color:var(--dim);flex-shrink:0"></i>';
+      row.onclick = (function(id) { return function() { linkSSO(id); }; })(opt.id);
+      container.appendChild(row);
+      refreshIcons();
+    });
+  }
+}
+
+function linkSSO(provider) {
+  const name = provider === 'google' ? 'Google Workspace' : 'Cloudflare Access';
+  const icon = provider === 'google' ? '🔴' : '☁️';
+  showLinkingScreen(name, icon, function() {
+    S.ssoLinked = true;
+    S.ssoProvider = provider;
+    S.ssoEmail = provider === 'google' ? 'yourteam.com' : 'team.cfaccess.io';
+    renderSquadSSO();
+    toast(name + ' connected — managed accounts will sign in via your org', 'green');
+  });
+}
+
+function unlinkSSO() {
+  cconfirm(
+    'Disconnect SSO?',
+    'Squad members will lose access until you reconnect a provider.',
+    'Disconnect',
+    function() {
+      S.ssoLinked = false;
+      S.ssoProvider = '';
+      S.ssoEmail = '';
+      renderSquadSSO();
+      toast('SSO disconnected', 'red');
+    }
+  );
+}
+
+function renderSecurity() {
+  // SMS only for pro+
+  const smsRow = document.getElementById('row-sms');
+  const hwRow = document.getElementById('row-hw');
+  const smsDesc = document.getElementById('sms-desc');
+  const hwDesc = document.getElementById('hw-desc');
+  const smsToggle = document.getElementById('toggle-sms');
+  const hwToggle = document.getElementById('toggle-hw');
+
+  if (isPro()) {
+    smsDesc.textContent = '';
+    smsToggle.onclick = () => { S.toggles.sms = !S.toggles.sms; smsToggle.classList.toggle('on', S.toggles.sms); toast(`SMS 2FA ${S.toggles.sms?'enabled':'disabled'}`, S.toggles.sms?'green':'red'); };
+  } else {
+    smsDesc.textContent = 'Pro & Squad only';
+    smsToggle.onclick = () => { toast('SMS 2FA requires Pro or Squad','red'); openModal('modal-upgrade'); };
+  }
+
+  if (isSquad()) {
+    hwDesc.textContent = '';
+    hwToggle.onclick = () => { S.toggles.hw = !S.toggles.hw; hwToggle.classList.toggle('on', S.toggles.hw); toast(`Hardware Key ${S.toggles.hw?'enabled':'disabled'}`, S.toggles.hw?'green':'red'); };
+  } else {
+    hwDesc.textContent = 'Squad only';
+    hwToggle.onclick = () => { toast('Hardware Key requires Squad tier','red'); openModal('modal-upgrade'); };
+  }
+
+  // Restore toggle visual states
+  document.getElementById('toggle-email').classList.toggle('on', S.toggles.email);
+  document.getElementById('toggle-totp').classList.toggle('on', S.toggles.totp);
+  document.getElementById('toggle-sms').classList.toggle('on', S.toggles.sms);
+  document.getElementById('toggle-hw').classList.toggle('on', S.toggles.hw);
+}
+
+function renderSubscription() {
+  const el = document.getElementById('sub-content');
+  const sub = document.getElementById('sub-sub');
+
+  const tierMap = {
+    free: 'Currently on Free',
+    pro_trial: `Pro Trial — ${S.trialDaysLeft} days left`,
+    pro: 'Currently on Pro',
+    squad_trial: `Squad Trial — ${S.trialDaysLeft} days left`,
+    squad: 'Currently on Squad',
+  };
+  sub.textContent = tierMap[S.tier] || '';
+
+  const plans = [
+    {
+      id: 'free', name: '🍁 Free', price: '$0', period: 'forever',
+      feats: '✓ 5 match analyses / week\n✓ Basic stats\n✓ 7 day match history\n✓ Basic AI tips\n✓ Data export',
+      action: null, trial: false,
+    },
+    {
+      id: 'pro', name: '🍁 Pro', price: '$5', period: '/mo',
+      feats: '✓ Unlimited analyses\n✓ Full match history\n✓ Heatmaps\n✓ Advanced AI coaching\n✓ Priority queue\n✓ Data export',
+      action: 'pro', trial: true,
+    },
+    {
+      id: 'squad', name: '🍁 Squad', price: '$45', period: '/mo',
+      feats: '✓ Everything in Pro\n✓ Squad dashboard (10 members included)\n✓ Teammate comparison\n✓ Shared mod dashboard\n✓ Custom SSO\n✓ Data export',
+      action: 'squad', trial: true,
+    },
+    {
+      id: 'enterprise', name: '⬡ Enterprise', price: 'Custom', period: '', tree: 'enterprise',
+      feats: '✓ Everything in Squad\n✓ Custom seat count\n✓ SAML + custom IdP\n✓ Per-team audit log\n✓ Custom roles & permissions\n✓ Full API read/write + webhooks\n✓ Dev API included\n✓ Invoiced billing\n✓ Dedicated support contact\n✓ 99.9% SLA',
+      action: 'enterprise', trial: true,
+    },
+  ];
+
+  // Calculate current bill
+  const MAX_SQUAD = 10;
+  const extraMembers = Math.max(0, S.squadMembers.filter(m => m.managed).length - MAX_SQUAD);
+  const monthlyBill = S.tier === 'pro' || S.tier === 'pro_trial' ? 5
+    : (S.tier === 'squad' || S.tier === 'squad_trial') ? 45 + (extraMembers * 4)
+    : 0;
+  const isTrial = S.tier.includes('_trial');
+
+  const billingCard = (S.tier !== 'free') ? `
+    <div class="card" style="border-color:${isTrial ? 'rgba(240,165,0,.4)' : 'var(--maple-d)'};background:linear-gradient(135deg,${isTrial ? 'rgba(240,165,0,.06)' : 'var(--maple-g)'},var(--surface));margin-bottom:14px">
+      <div class="card-hdr">
+        <div class="card-title">Current Bill</div>
+        <span class="ctag" style="${isTrial ? 'background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.25)' : 'background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.25)'}">
+          ${isTrial ? 'TRIAL — NO CHARGE' : 'ACTIVE'}
+        </span>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:4px">
+        $${monthlyBill}<small style="font-size:16px;color:var(--dim);font-family:'DM Mono',monospace">/mo</small>
+      </div>
+      ${isTrial ? '<div style="font-size:11px;color:var(--gold);margin-bottom:10px">Trial ends in ' + S.trialDaysLeft + ' days — add a card to keep access</div>' : ''}
+      ${(S.tier === 'squad' || S.tier === 'squad_trial') ? `
+        <div style="font-size:11px;color:var(--mid);line-height:2;padding:10px;background:var(--s2);border-radius:8px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between"><span>Squad base</span><span style="color:var(--text)">$45/mo</span></div>
+          ${extraMembers > 0 ? '<div style="display:flex;justify-content:space-between"><span>Extra members ('+extraMembers+'× $4)</span><span style="color:var(--gold)">+$'+(extraMembers*4)+'/mo</span></div>' : '<div style="font-size:10px;color:var(--dim)">10 members included · no extra charges</div>'}
+          ${extraMembers > 0 ? '<div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:6px;margin-top:2px;font-weight:700"><span>Total</span><span style="color:var(--maple)">$'+monthlyBill+'/mo</span></div>' : ''}
+        </div>` : ''}
+      ${!isTrial ? '<button class="btn btn-danger btn-full" onclick="cancelPlan()">Cancel Plan</button>' : '<button class="btn btn-ghost btn-full" onclick="cancelPlan()">Cancel Trial</button>'}
+    </div>` : '';
+
+  const normalPlans = plans.filter(function(p){ return p.tree === 'normal' || !p.tree; });
+  const entPlans = plans.filter(function(p){ return p.tree === 'enterprise'; });
+
+  el.innerHTML = billingCard + `
+    ${S.tier === 'free' ? '<div class="trial-banner"><div class="trial-icon"><i data-lucide="gift"></i></div><div class="trial-txt">Try Pro or Squad free for <strong>7 days</strong> — no credit card needed.</div></div>' : ''}
+    <div style="font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;padding:0 2px">Normal</div>
+    ${normalPlans.map(p => {
+      const isCurrent = (p.id === 'free' && S.tier === 'free') || (p.id === 'pro' && ['pro','pro_trial'].includes(S.tier)) || (p.id === 'squad' && ['squad','squad_trial'].includes(S.tier));
+      const isTrial = p.id !== 'free' && ['pro_trial','squad_trial'].includes(S.tier) && S.tier.startsWith(p.id);
+      return `
+      <div class="plan-card ${p.id==='pro'?'featured':''} ${isCurrent?'current':''}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="plan-name">${p.name}</div>
+          ${isCurrent ? `<span class="ctag" style="background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.25)">CURRENT${isTrial?' TRIAL':''}</span>` : ''}
+        </div>
+        <div class="plan-price">${p.price}<small>${p.period}</small></div>
+        ${p.id === 'squad' ? '<div style="font-size:10px;color:var(--dim);margin-top:-6px;margin-bottom:8px">+ $4/mo per member after 10</div>' : ''}
+        ${p.trial ? `<div class="plan-trial">🎁 7-day free trial — no card required</div>` : ''}
+        <div class="plan-feats">${p.feats.split('\n').join('<br>')}</div>
+        ${p.action && !isCurrent ? (p.id === 'enterprise'
+          ? `<div style="display:flex;gap:8px"><button class="btn btn-primary" style="flex:1" onclick="contactEnterprise()">Contact Sales</button><button class="btn btn-ghost btn-sm" onclick="startTrial('enterprise')">Start Trial</button></div>`
+          : `<div style="display:flex;gap:8px"><button class="btn btn-primary" style="flex:1" onclick="startTrial('${p.action}')">Start Free Trial</button><button class="btn btn-ghost btn-sm" onclick="openModal('modal-upgrade')">Details</button></div>`
+        ) : ''}
+        <!-- cancel is in billing card above -->
+      </div>`}).join('')}
+    <div style="font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin:14px 0 8px;padding:0 2px">Enterprise</div>
+    ${entPlans.map(p => {
+      const isCurrent = S.tier === 'enterprise' || S.tier === 'enterprise_trial';
+      const isTrial2 = S.tier === 'enterprise_trial';
+      return '<div class="plan-card" style="border-color:var(--purple);background:linear-gradient(135deg,rgba(139,92,246,.06),var(--surface))">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
+        + '<div class="plan-name">' + p.name + '</div>'
+        + (isCurrent ? '<span class="ctag" style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3)">CURRENT' + (isTrial2 ? ' TRIAL' : '') + '</span>' : '')
+        + '</div>'
+        + '<div style="font-size:22px;font-weight:800;color:#a78bfa;margin-bottom:2px">' + p.price + '</div>'
+        + '<div style="font-size:10px;color:var(--dim);margin-bottom:8px">Invoiced · custom contract</div>'
+        + (p.trial ? '<div class="plan-trial" style="color:#a78bfa">7-day free trial available</div>' : '')
+        + '<div class="plan-feats">' + p.feats.split('\n').join('<br>') + '</div>'
+        + (!isCurrent ? '<div style="display:flex;gap:8px"><button class="btn btn-primary btn-full" style="background:#7c3aed" onclick="contactEnterprise()">Contact Sales</button></div>' : '')
+        + '</div>';
+    }).join('')}
+    <div style="font-size:10px;color:var(--dim);text-align:center;padding:4px 0 8px">20% of all revenue goes to Nosniy Games (Rivals devs) 🍁</div>`;
+}
+
+// ═══════════════════════════════════════════
+// ANALYZE + RECORDING
+// ═══════════════════════════════════════════
+
+let isRecording = false;
+let recordTimer = null;
+let recordSeconds = 0;
+
+function toggleRecording() {
+  if (!S.robloxLinked) {
+    toast('Link your Roblox account first', 'red');
+    go('accounts', document.getElementById('ni-accounts'));
+    return;
+  }
+  isRecording = !isRecording;
+  const btn = document.getElementById('record-btn');
+  const icon = document.getElementById('rec-icon');
+  const label = document.getElementById('rec-label');
+  const sub = document.getElementById('rec-sub');
+
+  const watermark = document.getElementById('rec-watermark');
+  const wmTimer = document.getElementById('wm-timer');
+
+  if (isRecording) {
+    btn.classList.add('recording');
+    icon.innerHTML = '<span class="rec-dot"></span>⏹';
+    label.textContent = 'Stop Recording';
+    recordSeconds = 0;
+    if (watermark) watermark.classList.add('show');
+    recordTimer = setInterval(() => {
+      recordSeconds++;
+      const m = String(Math.floor(recordSeconds/60)).padStart(2,'0');
+      const s = String(recordSeconds%60).padStart(2,'0');
+      sub.textContent = 'Recording ' + m + ':' + s + ' · streaming';
+      if (wmTimer) wmTimer.textContent = m + ':' + s;
+    }, 1000);
+    toast('Recording started — csry.me watermark applied to footage', 'green');
+  } else {
+    btn.classList.remove('recording');
+    icon.innerHTML = '<i data-lucide="circle-dot"></i>';
+    label.textContent = 'Start Recording';
+    clearInterval(recordTimer);
+    if (watermark) watermark.classList.remove('show');
+    if (wmTimer) wmTimer.textContent = '00:00';
+    const m = String(Math.floor(recordSeconds/60)).padStart(2,'0');
+    const s = String(recordSeconds%60).padStart(2,'0');
+    sub.textContent = 'Last recorded ' + m + ':' + s;
+    // Add new recording to list
+    var rm = String(7 + Math.floor(Math.random()*2)).padStart(2,'0'), rs2 = String(Math.floor(Math.random()*60)).padStart(2,'0'); S.recordings.unshift({ id: Date.now(), mode:'1v1 Duel', map:'Map_0' + (Math.floor(Math.random()*4)+1), result: Math.random()>.4?'W':'L', score: Math.random()>.4?'5-'+Math.floor(Math.random()*4):''+Math.floor(Math.random()*4)+'-5', weapon:'Shotgun', dur: rm+':'+rs2, ago:'Just now', kd:(Math.random()*3+0.5).toFixed(1), analyzed:false });
+    renderRecordings();
+    toast('Recording saved — ' + m + ':' + s + ' captured', 'maple');
+    // Prompt to analyze
+    setTimeout(() => {
+      cconfirm('Recording saved', 'Analyze this match now?', 'Analyze', function() { runAnalysis(); });
+    }, 400);
+  }
+}
+
+function runAnalysis() {
+  if (!S.robloxLinked) {
+    toast('Link your Roblox account first', 'red');
+    go('accounts', document.getElementById('ni-accounts'));
+    return;
+  }
+  // Check weekly limit for free tier
+  if (!isPro() && S.analysesUsed >= S.analysesMax) {
+    toast('Weekly limit reached — upgrade for unlimited', 'red');
+    openModal('modal-upgrade');
+    return;
+  }
+
+  // Show analyze overlay
+  let overlay = document.getElementById('analyze-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'analyze-overlay';
+    overlay.id = 'analyze-overlay';
+    overlay.innerHTML = `
+      <div class="analyze-card">
+        <div class="analyze-title">Analyzing Match</div>
+        <div class="analyze-sub" id="analyze-msg">Csry AI is reviewing your last match</div>
+        <div class="analyze-bar"><div class="analyze-fill" id="analyze-fill"></div></div>
+        <div class="analyze-steps" id="analyze-steps">
+          <div class="analyze-step" id="ast-1"><div class="analyze-step-dot"></div>Loading match data</div>
+          <div class="analyze-step" id="ast-2"><div class="analyze-step-dot"></div>Parsing movement & positions</div>
+          <div class="analyze-step" id="ast-3"><div class="analyze-step-dot"></div>Detecting blunders & misses</div>
+          <div class="analyze-step" id="ast-4"><div class="analyze-step-dot"></div>Generating AI coaching tips</div>
+          <div class="analyze-step" id="ast-5"><div class="analyze-step-dot"></div>Calculating performance score</div>
+        </div>
+        <div class="analyze-result" id="analyze-result">
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;margin-bottom:10px;color:var(--green)">Analysis complete ✓</div>
+          <div class="ar-item"><span><i data-lucide="triangle-alert" style="width:13px;height:13px"></i></span><div><strong>3 blunders detected</strong> — over-peeking left corridor was the main issue.</div></div>
+          <div class="ar-item"><span><i data-lucide="target" style="width:13px;height:13px"></i></span><div><strong>Accuracy dropped 34%</strong> while moving. Stop before firing.</div></div>
+          <div class="ar-item"><span><i data-lucide="circle-check" style="width:13px;height:13px"></i></span><div><strong>Strong closer</strong> — you won 4 of 5 rounds when ahead. Keep it up.</div></div>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn btn-primary" style="flex:1" onclick="closeAnalyze();go('coaching',document.getElementById('ni-coaching'))">View Full Report</button>
+            <button class="btn btn-ghost" onclick="closeAnalyze()">Close</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+
+  // Reset
+  const fill = document.getElementById('analyze-fill');
+  const steps = [1,2,3,4,5].map(i => document.getElementById('ast-'+i));
+  const result = document.getElementById('analyze-result');
+  const msg = document.getElementById('analyze-msg');
+  fill.style.width = '0%';
+  fill.style.transition = 'width .4s ease';
+  steps.forEach(s => { s.className = 'analyze-step'; });
+  result.className = 'analyze-result';
+  msg.textContent = 'Csry AI is reviewing your last match';
+  document.querySelector('.analyze-title').textContent = 'Analyzing Match';
+
+  overlay.classList.add('show');
+
+  const durations = [500, 600, 700, 700, 500];
+  let cumulative = 0;
+
+  steps.forEach((step, i) => {
+    const delay = durations.slice(0,i).reduce((a,b)=>a+b,0);
+    setTimeout(() => {
+      steps.forEach(s => s.classList.remove('active'));
+      step.classList.add('active');
+      fill.style.width = `${((i+1)/steps.length)*90}%`;
+    }, delay);
+    setTimeout(() => {
+      step.classList.remove('active');
+      step.classList.add('done');
+      step.querySelector('.analyze-step-dot').style.background = 'var(--green)';
+    }, delay + durations[i] - 80);
+  });
+
+  const total = durations.reduce((a,b)=>a+b,0);
+
+  setTimeout(() => {
+    fill.style.width = '100%';
+    fill.style.background = 'linear-gradient(90deg,#1a7a44,var(--green))';
+    document.querySelector('.analyze-title').textContent = 'Done!';
+    msg.textContent = '';
+    result.classList.add('show');
+    // Consume one analysis for free tier
+    if (!isPro()) {
+      S.analysesUsed = Math.min(S.analysesMax, S.analysesUsed + 1);
+      renderSidebar();
+      renderDashboard();
+    }
+    // Update analyze button sub
+    const sub = document.getElementById('analyze-sub');
+    if (sub) sub.textContent = 'Just analyzed · now';
+  }, total + 100);
+}
+
+function closeAnalyze() {
+  const overlay = document.getElementById('analyze-overlay');
+  if (overlay) {
+    overlay.classList.remove('show');
+    // Reset fill color for next run
+    const fill = document.getElementById('analyze-fill');
+    if (fill) { fill.style.background = ''; }
+  }
+}
+
+// ═══════════════════════════════════════════
+// CUSTOM CONFIRM
+// ═══════════════════════════════════════════
+function cconfirm(title, msg, okLabel, onOk, onCancel) {
+  const bg = document.getElementById('cconfirm-bg');
+  document.getElementById('cconfirm-title').textContent = title;
+  document.getElementById('cconfirm-msg').textContent = msg;
+  const okBtn = document.getElementById('cconfirm-ok');
+  const cancelBtn = document.getElementById('cconfirm-cancel');
+  okBtn.textContent = okLabel || 'Confirm';
+
+  const close = function() { bg.classList.remove('show'); };
+
+  okBtn.onclick = function() { close(); if (onOk) onOk(); };
+  cancelBtn.onclick = function() { close(); if (onCancel) onCancel(); };
+  bg.onclick = function(e) { if (e.target === bg) { close(); if (onCancel) onCancel(); } };
+
+  bg.classList.add('show');
+}
+
+// ═══════════════════════════════════════════
+// STRIPE
+// ═══════════════════════════════════════════
+
+function connectStripe() {
+  const key = document.getElementById('stripe-key-input').value.trim();
+  if (!key) { toast('Enter your Stripe secret key', 'red'); return; }
+  if (!key.startsWith('sk_')) { toast('Invalid key — must start with sk_', 'red'); return; }
+
+  // Simulate connecting
+  showActionScreen({
+    icon: '💳',
+    title: 'Connecting Stripe',
+    subtitle: 'Verifying your credentials...',
+    steps: ['Validating secret key', 'Connecting to Stripe API', 'Configuring webhooks', 'Setting up payouts'],
+    duration: 450,
+    successMsg: 'Stripe connected!',
+    successSub: 'Payments are now live.',
+    doneTitle: 'Connected',
+    onDone: function() {
+      S.stripeConnected = true;
+      S.stripeAccount = 'acct_' + key.slice(-8);
+      renderStripe();
+    }
+  });
+  document.getElementById('stripe-key-input').value = '';
+}
+
+function disconnectStripe() {
+  cconfirm('Disconnect Stripe?', 'Payments will stop being collected. You can reconnect at any time.', 'Disconnect', function() {
+    S.stripeConnected = false;
+    S.stripeAccount = '';
+    renderStripe();
+    toast('Stripe disconnected', 'red');
+  });
+}
+
+function renderStripe() {
+  const tag = document.getElementById('stripe-status-tag');
+  const unlinked = document.getElementById('stripe-unlinked');
+  const linked = document.getElementById('stripe-linked');
+  const acctLabel = document.getElementById('stripe-acct-label');
+  if (!tag) return;
+  if (S.stripeConnected) {
+    tag.textContent = 'CONNECTED';
+    tag.style.background = 'rgba(46,204,113,.12)';
+    tag.style.color = 'var(--green)';
+    tag.style.border = '1px solid rgba(46,204,113,.25)';
+    unlinked.style.display = 'none';
+    linked.style.display = '';
+    if (acctLabel) acctLabel.textContent = S.stripeAccount;
+  } else {
+    tag.textContent = 'NOT CONNECTED';
+    tag.style.background = '';
+    tag.style.color = '';
+    tag.style.border = '';
+    unlinked.style.display = '';
+    linked.style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════
+function renderAll() {
+  renderSidebar();
+  renderDashboard();
+  renderStripe();
+  renderRecordings();
+  refreshIcons();
+  renderCoaching();
+  renderMatches();
+  renderSquad();
+  renderSquadSSO();
+  renderAccounts();
+  renderSecurity();
+  renderSubscription();
+  refreshIcons();
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function go(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  if (el) el.classList.add('active');
+  if (window.innerWidth <= 768) toggleSB(false);
+  if (id === 'heatmaps') renderHeatmaps();
+  refreshIcons();
+}
+
+function toggleSB(force) {
+  const sb = document.getElementById('sidebar');
+  const hbg = document.getElementById('hbg');
+  const ov = document.getElementById('overlay');
+  const open = force !== undefined ? force : !sb.classList.contains('open');
+  sb.classList.toggle('open', open);
+  if (hbg) hbg.classList.toggle('open', open);
+  ov.classList.toggle('show', open);
+}
+
+// ═══════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id, e) {
+  if (!e || e.target === document.getElementById(id)) document.getElementById(id).classList.remove('show');
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function toast(msg, type='maple') {
+  const area = document.getElementById('toast-area');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<div class="toast-dot"></div>${msg}`;
+  area.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 2800);
+}
+
+// ═══════════════════════════════════════════
+// ACTIONS — all mutate S then re-render
+// ═══════════════════════════════════════════
+
+function showLoadingScreen(plan, onDone) {
+  const screen = document.getElementById('loading-screen');
+  const leaf = document.getElementById('ls-leaf');
+  const logo = document.getElementById('ls-logo');
+  const fill = document.getElementById('ls-progress-fill');
+  const msg = document.getElementById('ls-success-msg');
+  const sub = document.getElementById('ls-success-sub');
+  const steps = [
+    document.getElementById('ls-step-1'),
+    document.getElementById('ls-step-2'),
+    document.getElementById('ls-step-3'),
+    document.getElementById('ls-step-4'),
+  ];
+  const planName = plan === 'pro' ? 'Pro' : 'Squad';
+
+  // Reset
+  leaf.className = 'ls-leaf';
+  logo.className = 'ls-logo';
+  logo.innerHTML = 'csry<span>.me</span>';
+  fill.style.width = '0%';
+  fill.className = 'ls-progress-fill';
+  msg.className = 'ls-success-msg';
+  sub.className = 'ls-success-sub';
+  sub.textContent = '';
+  steps.forEach(s => s.className = 'ls-step');
+
+  // Show screen
+  screen.classList.add('show');
+  closeModal('modal-upgrade');
+
+  const stepDurations = [600, 700, 600, 500];
+  let elapsed = 0;
+
+  steps.forEach((step, i) => {
+    const delay = stepDurations.slice(0, i).reduce((a, b) => a + b, 0);
+    const dur = stepDurations[i];
+
+    // Activate step
+    setTimeout(() => {
+      steps.forEach(s => { if (s.classList.contains('active')) s.classList.remove('active'); });
+      step.classList.add('active');
+      // Replace icon with spinner
+      const icon = step.querySelector('.ls-step-icon');
+      const spinner = document.createElement('div');
+      spinner.className = 'ls-step-spinner';
+      if (icon) step.replaceChild(spinner, icon);
+      // Progress bar
+      fill.style.width = `${((i + 1) / steps.length) * 85}%`;
+    }, delay);
+
+    // Complete step
+    setTimeout(() => {
+      step.classList.remove('active');
+      step.classList.add('done');
+      const spinner = step.querySelector('.ls-step-spinner');
+      if (spinner) {
+        const icon = document.createElement('span');
+        icon.className = 'ls-step-icon';
+        icon.textContent = '✓';
+        step.replaceChild(icon, spinner);
+      }
+    }, delay + dur - 80);
+  });
+
+  const totalDur = stepDurations.reduce((a, b) => a + b, 0);
+
+  // Success state
+  setTimeout(() => {
+    fill.style.width = '100%';
+    fill.className = 'ls-progress-fill green';
+    leaf.className = 'ls-leaf success';
+    logo.innerHTML = 'maple<span style="color:var(--green)">.me</span>';
+
+    setTimeout(() => {
+      msg.textContent = `${planName} trial activated!`;
+      msg.classList.add('show');
+      sub.textContent = `7 days free — enjoy your upgrade 🍁`;
+      sub.classList.add('show');
+    }, 350);
+
+    // Apply state change
+    onDone();
+
+    // Dismiss
+    setTimeout(() => {
+      screen.classList.add('hide');
+      setTimeout(() => {
+        screen.classList.remove('show', 'hide');
+        // Reset for next time
+        leaf.className = 'ls-leaf';
+      }, 300);
+    }, 1600);
+
+  }, totalDur + 100);
+}
+
+function startTrial(plan) {
+  showLoadingScreen(plan, () => {
+    S.tier = plan + '_trial';
+    S.trialDaysLeft = 7;
+    renderAll();
+  });
+}
+
+function startTrialFlow() { openModal('modal-upgrade'); }
+
+function contactEnterprise() {
+  var modal = document.getElementById('modal-enterprise');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modal-enterprise';
+    modal.className = 'modal-bg';
+    modal.onclick = function(e) { if (e.target === modal) modal.classList.remove('show'); };
+
+    var box = document.createElement('div');
+    box.className = 'modal';
+
+    var closeBtn = document.createElement('div');
+    closeBtn.className = 'modal-close';
+    closeBtn.style.cssText = 'position:absolute;top:14px;right:14px';
+    closeBtn.innerHTML = '<i data-lucide="x" style="width:13px;height:13px"></i>';
+    closeBtn.onclick = function() { modal.classList.remove('show'); };
+
+    var title = document.createElement('div');
+    title.className = 'modal-title';
+    title.textContent = 'Enterprise Plan';
+
+    var sub = document.createElement('div');
+    sub.className = 'modal-sub';
+    sub.textContent = 'Custom pricing, dedicated support, and full API access';
+
+    var feats = document.createElement('div');
+    feats.style.cssText = 'background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--mid);line-height:1.8';
+    feats.innerHTML = '&#10003; Everything in Squad<br>&#10003; Custom seat count<br>&#10003; SAML + custom IdP<br>&#10003; Audit logs &amp; custom roles<br>&#10003; Full API read/write + webhooks<br>&#10003; Dev API unlimited<br>&#10003; Invoiced billing<br>&#10003; 99.9% SLA<br>&#10003; Dedicated support';
+
+    var lbl1 = document.createElement('label');
+    lbl1.className = 'input-lbl';
+    lbl1.textContent = 'Your email';
+    var inp1 = document.createElement('input');
+    inp1.className = 'input'; inp1.id = 'ent-email'; inp1.type = 'email'; inp1.placeholder = 'you@company.com';
+
+    var lbl2 = document.createElement('label');
+    lbl2.className = 'input-lbl';
+    lbl2.textContent = 'Company / game studio';
+    var inp2 = document.createElement('input');
+    inp2.className = 'input'; inp2.id = 'ent-company'; inp2.placeholder = 'e.g. Nosniy Games';
+
+    var lbl3 = document.createElement('label');
+    lbl3.className = 'input-lbl';
+    lbl3.textContent = 'Estimated team size';
+    var inp3 = document.createElement('input');
+    inp3.className = 'input'; inp3.id = 'ent-size'; inp3.placeholder = 'e.g. 25 members';
+
+    var submitBtn = document.createElement('button');
+    submitBtn.className = 'btn btn-primary btn-full';
+    submitBtn.style.background = '#7c3aed';
+    submitBtn.textContent = 'Request a call';
+    submitBtn.onclick = submitEnterpriseContact;
+
+    [closeBtn, title, sub, feats, lbl1, inp1, lbl2, inp2, lbl3, inp3, submitBtn].forEach(function(el) {
+      box.appendChild(el);
+    });
+    modal.appendChild(box);
+    document.body.appendChild(modal);
+    refreshIcons();
+  }
+  modal.classList.add('show');
+}
+
+function submitEnterpriseContact() {
+  var email = document.getElementById('ent-email') ? document.getElementById('ent-email').value.trim() : '';
+  var company = document.getElementById('ent-company') ? document.getElementById('ent-company').value.trim() : '';
+  if (!email || !company) { toast('Fill in email and company', 'red'); return; }
+  var modal = document.getElementById('modal-enterprise');
+  if (modal) modal.classList.remove('show');
+  showActionScreen({
+    icon: '📨',
+    title: 'Sending Request',
+    subtitle: 'Contacting the csry.me team...',
+    steps: ['Submitting your details', 'Notifying sales team', 'Scheduling follow-up'],
+    duration: 500,
+    successMsg: 'Request sent!',
+    successSub: 'Our team will reach out within 24h.',
+    doneTitle: 'Sent',
+    onDone: function() {}
+  });
+}
+
+function cancelPlan() {
+  const managedCount = S.squadMembers.filter(m => m.managed).length;
+  const msg = managedCount > 0
+    ? managedCount + ' squad account' + (managedCount>1?'s':'') + ' will be permanently terminated. This cannot be undone.'
+    : "You'll revert to Free at the end of your billing period.";
+  const title = managedCount > 0 ? 'Cancel Squad plan?' : 'Cancel plan?';
+  cconfirm(title, msg, 'Yes, cancel', function() {
+    S.squadMembers = S.squadMembers.filter(m => !m.managed);
+    S.tier = 'free';
+    S.trialDaysLeft = null;
+    renderAll();
+    if (managedCount > 0) toast('Plan cancelled — squad accounts terminated', 'red');
+    else toast('Plan cancelled — reverted to Free', 'red');
+  });
+}
+
+function showLinkingScreen(platform, icon, onDone) {
+  let overlay = document.getElementById('link-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'link-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(10,10,11,.92);z-index:1500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);flex-direction:column;gap:0';
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = `
+    <div class="analyze-card" style="text-align:center">
+      <div style="font-size:40px;margin-bottom:12px" id="link-icon">${icon}</div>
+      <div class="analyze-title" id="link-title">Connecting ${platform}</div>
+      <div class="analyze-sub" id="link-msg">Redirecting to ${platform}...</div>
+      <div class="analyze-bar" style="margin-top:16px"><div class="analyze-fill" id="link-fill"></div></div>
+      <div class="analyze-steps" id="link-steps" style="margin-top:16px">
+        <div class="analyze-step" id="lnk-1"><div class="analyze-step-dot"></div>Opening ${platform} login</div>
+        <div class="analyze-step" id="lnk-2"><div class="analyze-step-dot"></div>Verifying credentials</div>
+        <div class="analyze-step" id="lnk-3"><div class="analyze-step-dot"></div>Linking to your account</div>
+      </div>
+      <div id="link-success" style="display:none;margin-top:8px">
+        <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--green);margin-bottom:6px">${platform} linked! ✓</div>
+        <div style="font-size:11px;color:var(--mid)">You're all set.</div>
+      </div>
+    </div>`;
+  overlay.style.display = 'flex';
+
+  const fill = document.getElementById('link-fill');
+  const steps = [1,2,3].map(i => document.getElementById('lnk-'+i));
+  const durations = [700, 800, 600];
+
+  steps.forEach((step, i) => {
+    const delay = durations.slice(0,i).reduce((a,b)=>a+b,0);
+    setTimeout(() => {
+      steps.forEach(s => s.classList.remove('active'));
+      step.classList.add('active');
+      fill.style.width = `${((i+1)/3)*85}%`;
+    }, delay);
+    setTimeout(() => {
+      step.classList.remove('active');
+      step.classList.add('done');
+      step.querySelector('.analyze-step-dot').style.background = 'var(--green)';
+    }, delay + durations[i] - 80);
+  });
+
+  const total = durations.reduce((a,b)=>a+b,0);
+  setTimeout(() => {
+    fill.style.width = '100%';
+    fill.style.background = 'linear-gradient(90deg,#1a7a44,var(--green))';
+    document.getElementById('link-title').textContent = 'Connected!';
+    document.getElementById('link-msg').textContent = '';
+    document.getElementById('link-steps').style.display = 'none';
+    document.getElementById('link-success').style.display = 'block';
+    onDone();
+    setTimeout(() => { overlay.style.display = 'none'; }, 1200);
+  }, total + 100);
+}
+
+// ─── GENERALISED ACTION SCREEN ───
+// showActionScreen(opts) where opts = { icon, title, steps[], successMsg, duration, onDone }
+function showActionScreen(opts) {
+  var overlay = document.getElementById('link-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'link-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(10,10,11,.92);z-index:1500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);flex-direction:column;gap:0';
+    document.body.appendChild(overlay);
+  }
+
+  var stepsHTML = (opts.steps || []).map(function(s, i) {
+    return '<div class="analyze-step" id="as-step-' + i + '"><div class="analyze-step-dot"></div>' + s + '</div>';
+  }).join('');
+
+  overlay.innerHTML =
+    '<div class="analyze-card" style="text-align:center;min-width:280px">'
+    + '<div style="font-size:36px;margin-bottom:10px">' + (opts.icon || '⚙️') + '</div>'
+    + '<div class="analyze-title" id="as-title">' + opts.title + '</div>'
+    + '<div class="analyze-sub" id="as-sub">' + (opts.subtitle || '') + '</div>'
+    + '<div class="analyze-bar" style="margin-top:14px"><div class="analyze-fill" id="as-fill"></div></div>'
+    + '<div class="analyze-steps" id="as-steps" style="margin-top:14px">' + stepsHTML + '</div>'
+    + '<div id="as-success" style="display:none;margin-top:10px">'
+    + '<div style="font-weight:800;color:var(--green);font-size:15px;margin-bottom:4px">' + (opts.successMsg || 'Done!') + '</div>'
+    + '<div style="font-size:11px;color:var(--mid)">' + (opts.successSub || '') + '</div>'
+    + '</div>'
+    + '</div>';
+
+  overlay.style.display = 'flex';
+
+  var fill = document.getElementById('as-fill');
+  var stepEls = (opts.steps || []).map(function(_, i) { return document.getElementById('as-step-' + i); });
+  var n = stepEls.length || 1;
+  var dur = opts.duration || 400;
+  var stepDurs = stepEls.map(function() { return dur; });
+
+  stepEls.forEach(function(step, i) {
+    if (!step) return;
+    var delay = stepDurs.slice(0, i).reduce(function(a,b){return a+b;}, 0);
+    setTimeout(function() {
+      stepEls.forEach(function(s) { if(s) s.classList.remove('active'); });
+      step.classList.add('active');
+      fill.style.width = (((i+1)/n)*85) + '%';
+    }, delay);
+    setTimeout(function() {
+      step.classList.remove('active');
+      step.classList.add('done');
+      var dot = step.querySelector('.analyze-step-dot');
+      if (dot) dot.style.background = 'var(--green)';
+    }, delay + stepDurs[i] - 60);
+  });
+
+  var total = stepDurs.reduce(function(a,b){return a+b;}, 0);
+  setTimeout(function() {
+    fill.style.width = '100%';
+    fill.style.background = 'linear-gradient(90deg,#1a7a44,var(--green))';
+    var t = document.getElementById('as-title');
+    if (t) t.textContent = opts.doneTitle || 'Done!';
+    var s = document.getElementById('as-sub');
+    if (s) s.textContent = '';
+    var st = document.getElementById('as-steps');
+    if (st) st.style.display = 'none';
+    var sc = document.getElementById('as-success');
+    if (sc) sc.style.display = 'block';
+    if (opts.onDone) opts.onDone();
+    setTimeout(function() { overlay.style.display = 'none'; }, 900);
+  }, total + 80);
+}
+
+function linkRoblox() {
+  showLinkingScreen('Roblox', '🎮', () => {
+    S.robloxLinked = true;
+    renderAccounts();
+    toast('Roblox account linked!', 'green');
+  });
+}
+function linkDiscord() {
+  showLinkingScreen('Discord', '🔵', () => {
+    S.discordLinked = true;
+    renderAccounts();
+    toast('Discord account linked!', 'green');
+  });
+}
+function linkGoogle() {
+  showLinkingScreen('Google', '🔴', () => {
+    S.googleLinked = true;
+    renderAccounts();
+    toast('Google account linked!', 'green');
+  });
+}
+function regenToken() {
+  cconfirm('Regenerate token?', 'Your old token will stop working immediately.', 'Regenerate', function() {
+    showActionScreen({
+      icon: '🔄',
+      title: 'Regenerating Token',
+      subtitle: 'Invalidating old token...',
+      steps: ['Revoking old token', 'Generating new token', 'Updating server'],
+      duration: 380,
+      successMsg: 'Token regenerated!',
+      successSub: 'Your new token is active.',
+      doneTitle: 'Done',
+      onDone: function() {}
+    });
+  });
+}
+
+function createSquad() {
+  showActionScreen({
+    icon: '👥',
+    title: 'Creating Squad',
+    subtitle: 'Setting up your team...',
+    steps: ['Registering squad', 'Setting up mod dashboard', 'Configuring SSO settings'],
+    duration: 400,
+    successMsg: 'Squad created!',
+    successSub: 'Add members and link your workspace.',
+    doneTitle: 'Ready',
+    onDone: function() {
+      S.inSquad = true;
+      renderAll();
+      go('squad', document.getElementById('ni-squad'));
+    }
+  });
+}
+
+function toggleSetting(el, name) {
+  el.classList.toggle('on');
+  const key = el.id.replace('toggle-','');
+  if (S.toggles[key] !== undefined) S.toggles[key] = el.classList.contains('on');
+  toast(`${name} ${el.classList.contains('on')?'enabled':'disabled'}`, el.classList.contains('on')?'green':'red');
+}
+
+function revokeSession(btn) {
+  var row = btn.closest('.set-row');
+  showActionScreen({
+    icon: '🔒',
+    title: 'Revoking Session',
+    subtitle: 'Signing out remote device...',
+    steps: ['Invalidating session token', 'Notifying device'],
+    duration: 450,
+    successMsg: 'Session revoked!',
+    successSub: 'Device has been signed out.',
+    doneTitle: 'Done',
+    onDone: function() {
+      row.style.opacity='0'; row.style.transition='.3s';
+      setTimeout(function(){ row.remove(); }, 300);
+    }
+  });
+}
+
+function exportData(format) {
+  if (!S.robloxLinked) { toast('Link your Roblox account first','red'); go('accounts',document.getElementById('ni-accounts')); return; }
+  closeModal('modal-match');
+  showActionScreen({
+    icon: format === 'PDF' ? '📄' : format === 'CSV' ? '⊞' : '{ }',
+    title: 'Preparing ' + format,
+    subtitle: 'Gathering your match data...',
+    steps: ['Collecting match records', 'Formatting ' + format + ' file', 'Finalising download'],
+    duration: 380,
+    successMsg: format + ' ready!',
+    successSub: 'Your download has started.',
+    doneTitle: 'Download ready',
+    onDone: function() {}
+  });
+}
+
+function filterMatches(type, btn) {
+  document.querySelectorAll('#panel-matches .btn').forEach(b=>{ b.classList.remove('btn-primary'); b.classList.add('btn-ghost'); });
+  btn.classList.remove('btn-ghost'); btn.classList.add('btn-primary');
+  document.querySelectorAll('#matches-list .match-item').forEach(m => {
+    const show = (type==='all'||m.dataset.r===type);
+    const isLocked = m.classList.contains('free-locked');
+    m.style.display = (show && (!isLocked || isPro())) ? 'flex' : 'none';
+  });
+}
+
+// MOD QUEUE
+function dismissFlag(btn) {
+  var item = btn.closest('.flag-item');
+  showActionScreen({
+    icon: '✓',
+    title: 'Dismissing Flag',
+    subtitle: 'Recording decision...',
+    steps: ['Logging dismissal', 'Clearing flag'],
+    duration: 300,
+    successMsg: 'Flag dismissed',
+    successSub: 'No action taken.',
+    doneTitle: 'Dismissed',
+    onDone: function() {
+      item.style.opacity='0';item.style.transform='translateX(20px)';item.style.transition='.3s';
+      setTimeout(function(){
+        item.remove();
+        S.modCount=Math.max(0,S.modCount-1);
+        renderSidebar();
+        var pending=document.getElementById('mod-pending');
+        if(pending) pending.textContent=S.modCount+' PENDING';
+      },300);
+    }
+  });
+}
+function banPlayer(btn, name) {
+  const item = btn.closest('.flag-item');
+  showActionScreen({
+    icon: '🚫',
+    title: 'Banning ' + name,
+    subtitle: 'Submitting to Csry + Rivals...',
+    steps: ['Verifying flag evidence', 'Issuing Csry ban', 'Reporting to Rivals mods'],
+    duration: 420,
+    successMsg: name + ' banned!',
+    successSub: 'Removed from Csry and reported to Rivals.',
+    doneTitle: 'Ban applied',
+    onDone: function() {
+      item.style.opacity='0';item.style.transform='translateX(20px)';item.style.transition='.3s';
+      setTimeout(function(){
+        item.remove(); S.modCount=Math.max(0,S.modCount-1); renderSidebar();
+        var pending = document.getElementById('mod-pending');
+        if (pending) pending.textContent=S.modCount+' PENDING';
+        S.banLog.unshift(name);
+        var log = document.getElementById('ban-log');
+        if (log) { var row=document.createElement('div'); row.style.cssText='display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px'; row.innerHTML='<span>'+name+'</span><span style="color:var(--red)">banned just now</span>'; log.prepend(row); }
+      },300);
+    }
+  });
+}
+
+// SQUAD FLAGS
+function dismissSquadFlag(i) {
+  showActionScreen({
+    icon: '✓',
+    title: 'Dismissing Flag',
+    subtitle: 'Recording decision...',
+    steps: ['Logging dismissal', 'Clearing flag'],
+    duration: 300,
+    successMsg: 'Flag dismissed',
+    successSub: 'No action taken.',
+    doneTitle: 'Dismissed',
+    onDone: function() {
+      S.squadFlags.splice(i,1);
+      renderSquad();
+    }
+  });
+}
+function banSquadPlayer(i, name) {
+  S.squadFlags.splice(i,1);
+  renderSquad();
+  toast(`${name} banned`,'red');
+}
+
+// API KEYS
+function newApiKey() {
+  showActionScreen({
+    icon: '🔑',
+    title: 'Generating Key',
+    subtitle: 'Creating secure API key...',
+    steps: ['Generating cryptographic key', 'Registering with API gateway', 'Activating key'],
+    duration: 350,
+    successMsg: 'API key created!',
+    successSub: 'Your new key is ready.',
+    doneTitle: 'Key ready',
+    onDone: function() {
+      var chars='abcdef0123456789';
+      var key='csry_dev_'+Array.from({length:8},function(){return chars[Math.floor(Math.random()*chars.length)];}).join('')+'...';
+      var list=document.getElementById('api-key-list');
+      if (!list) return;
+      var item=document.createElement('div');
+      item.className='key-item';item.style.animation='cardReveal .3s ease';
+      item.innerHTML='<div><div class="key-n">Key '+(Date.now()%10000)+'</div><div class="key-v">'+key+'</div></div><button class="btn btn-danger btn-sm" onclick="revokeKey(this)">Revoke</button>';
+      list.appendChild(item);
+    }
+  });
+}
+function revokeKey(btn) {
+  var item = btn.closest('.key-item');
+  showActionScreen({
+    icon: '🗑️',
+    title: 'Revoking Key',
+    subtitle: 'Removing from API gateway...',
+    steps: ['Deactivating key', 'Clearing from edge cache'],
+    duration: 450,
+    successMsg: 'Key revoked!',
+    successSub: 'All requests using this key are now blocked.',
+    doneTitle: 'Revoked',
+    onDone: function() {
+      item.style.opacity='0'; item.style.transition='.3s';
+      setTimeout(function(){ item.remove(); }, 300);
+    }
+  });
+}
+
+// INVITE
+function selectLoginMethod(method) {
+  ['password','google','cloudflare'].forEach(function(m) {
+    document.getElementById('lm-' + m).classList.toggle('active', m === method);
+    document.getElementById('lm-fields-' + m).style.display = m === method ? '' : 'none';
+  });
+  // Update org labels from state
+  var gLabel = document.getElementById('google-org-label');
+  var cfLabel = document.getElementById('cf-org-label');
+  if (gLabel) gLabel.textContent = (S.ssoLinked && S.ssoProvider === 'google') ? S.ssoEmail : 'not connected';
+  if (cfLabel) cfLabel.textContent = (S.ssoLinked && S.ssoProvider === 'cloudflare') ? S.ssoEmail : 'not connected';
+}
+
+function getActiveLoginMethod() {
+  if (document.getElementById('lm-google').classList.contains('active')) return 'google';
+  if (document.getElementById('lm-cloudflare').classList.contains('active')) return 'cloudflare';
+  return 'password';
+}
+
+function createSquadMember() {
+  const name = document.getElementById('create-name-input').value.trim();
+  const user = document.getElementById('create-user-input').value.trim();
+  const role = document.getElementById('create-role-input').value;
+  const loginMethod = getActiveLoginMethod();
+  const email = document.getElementById('create-email-input') ? document.getElementById('create-email-input').value.trim() : '';
+  const pass = document.getElementById('create-pass-input') ? document.getElementById('create-pass-input').value.trim() : '';
+
+  if (!name || !user) { toast('Fill in all fields', 'red'); return; }
+  if (loginMethod === 'password' && (!email || !pass)) { toast('Enter email and password', 'red'); return; }
+  if (loginMethod === 'password' && pass.length < 8) { toast('Password must be at least 8 characters', 'red'); return; }
+  if (loginMethod === 'google' && !(S.ssoLinked && S.ssoProvider === 'google')) {
+    toast('Connect Google Workspace first in Squad Dashboard', 'red'); return;
+  }
+  if (loginMethod === 'cloudflare' && !(S.ssoLinked && S.ssoProvider === 'cloudflare')) {
+    toast('Configure Cloudflare Access first in Squad Dashboard', 'red'); return;
+  }
+
+  const MAX_BASE = 10;
+
+  // Trial plans: hard cap at 10 members, no extras allowed
+  if ((S.tier === 'squad_trial' || S.tier === 'enterprise_trial') && S.squadMembers.length >= MAX_BASE) {
+    toast('Trial is capped at 10 members — upgrade to a paid plan to add more', 'red');
+    closeModal('modal-create-member');
+    return;
+  }
+
+
+  // Close the modal FIRST — confirm() doesn't work reliably while a modal overlay is open
+  closeModal('modal-create-member');
+
+  const doCreate = function() {
+    const colors = [
+      'linear-gradient(135deg,#3b82f6,#8b5cf6)',
+      'linear-gradient(135deg,#8b5cf6,#ec4899)',
+      'linear-gradient(135deg,#2ecc71,#3b82f6)',
+      'linear-gradient(135deg,#f0a500,#e8622a)',
+      'linear-gradient(135deg,#ec4899,#f0a500)',
+    ];
+    const initials = (name.split(' ').map(function(w){ return w[0]; }).join('') || name.slice(0,2)).toUpperCase().slice(0,2);
+    S.squadMembers.push({
+      initials: initials,
+      name: name,
+      username: user,
+      role: role,
+      loginMethod: loginMethod,
+      color: colors[S.squadMembers.length % colors.length],
+      kd: '-', wr: '-', main: '-',
+      managed: true,
+      robloxLinked: false
+    });
+    document.getElementById('create-name-input').value = '';
+    document.getElementById('create-user-input').value = '';
+    if (document.getElementById('create-email-input')) document.getElementById('create-email-input').value = '';
+    if (document.getElementById('create-pass-input')) document.getElementById('create-pass-input').value = '';
+    selectLoginMethod('password');
+    renderSquad();
+    var methodLabel = loginMethod === 'google' ? 'Google Workspace' : loginMethod === 'cloudflare' ? 'Cloudflare Access' : 'email/password';
+    toast('Account created for ' + name + ' — login via ' + methodLabel, 'green');
+  };
+
+  if (S.squadMembers.length >= MAX_BASE) {
+    const num = S.squadMembers.length + 1;
+    cconfirm(
+      'Extra member charge',
+      'Member ' + num + ' exceeds your 10 included slots. This adds $4/mo to your bill. Continue?',
+      'Add member',
+      doCreate,
+      function() {
+        toast('Cancelled — no account created', 'red');
+        openModal('modal-create-member');
+      }
+    );
+  } else {
+    doCreate();
+  }
+}
+
+// SQUAD MEMBER ROBLOX LINK
+function linkSquadMemberRoblox(idx) {
+  const m = S.squadMembers[idx];
+  document.getElementById('modal-member-stats').classList.remove('show');
+  showLinkingScreen('Roblox for ' + m.name, '🎮', function() {
+    S.squadMembers[idx].robloxLinked = true;
+    renderSquad();
+    toast(m.name + ' Roblox linked — match data will stream via WSS', 'green');
+  });
+}
+
+// HEATMAP
+function buildHM(id, spots) {
+  const el=document.getElementById(id);
+  if (!el||el.children.length>0) return;
+  for (let r=0;r<10;r++) for (let c=0;c<20;c++) {
+    const cell=document.createElement('div');
+    cell.className='hm-cell';
+    let h=0;
+    for (const [hc,hr] of spots) { const d=Math.sqrt((c-hc)**2+(r-hr)**2); h+=Math.max(0,1-d/4); }
+    h=Math.min(h,1);
+    if (h>.05) { cell.style.background=`rgb(${Math.round(232*h+30*(1-h))},${Math.round(30*h*.3)},${Math.round(20*h*.2)})`; cell.style.opacity=Math.max(.08,h); }
+    el.appendChild(cell);
+  }
+}
+
+// ═══════════════════════════════════════════
+// DEMO CONTROLS — top bar quick toggle
+// ═══════════════════════════════════════════
+// Right-click topbar logo to get demo menu
+document.querySelector('.tb-logo')?.addEventListener('contextmenu', e => { e.preventDefault(); showDemoMenu(); });
+document.querySelector('.sb-logo')?.addEventListener('contextmenu', e => { e.preventDefault(); showDemoMenu(); });
+
+function showDemoMenu() {
+  const existing = document.getElementById('demo-bar');
+  if (existing) { existing.remove(); return; }
+  const bar = document.createElement('div');
+  bar.id = 'demo-bar';
+  bar.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;z-index:999;display:flex;gap:8px;flex-wrap:wrap;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:11px';
+  bar.innerHTML = `
+    <span style="color:var(--dim);margin-right:4px">Demo:</span>
+    <button class="btn btn-ghost btn-sm" onclick="setTier('free')">Free</button>
+    <button class="btn btn-ghost btn-sm" onclick="setTier('pro_trial')">Pro Trial</button>
+    <button class="btn btn-ghost btn-sm" onclick="setTier('pro')">Pro</button>
+    <button class="btn btn-ghost btn-sm" onclick="setTier('squad_trial')">Squad Trial</button>
+    <button class="btn btn-ghost btn-sm" onclick="setTier('squad')">Squad</button>
+    <button class="btn btn-ghost btn-sm" onclick="setTier('enterprise_trial')">Ent Trial</button>
+    <button class="btn btn-ghost btn-sm" onclick="setTier('enterprise')">Enterprise</button>
+    <span style="color:var(--dim);margin:0 4px">|</span>
+    <button class="btn btn-ghost btn-sm" onclick="toggleAdmin()">Toggle Admin</button>
+    <button class="btn btn-ghost btn-sm" onclick="toggleSquad()">Toggle Squad</button>
+    <button class="btn btn-ghost btn-sm" onclick="toggleRoblox()">Toggle Roblox</button>
+    <button class="btn btn-danger btn-sm" onclick="document.getElementById('demo-bar').remove()"><i data-lucide="x" style="width:11px;height:11px"></i></button>`;
+  document.body.appendChild(bar);
+}
+
+function setTier(t) {
+  S.tier = t;
+  S.trialDaysLeft = t.includes('trial') ? 7 : null;
+  renderAll();
+  toast(`Tier set to ${t}`,'maple');
+}
+function toggleAdmin() { S.isAdmin = !S.isAdmin; renderAll(); toast(`Admin ${S.isAdmin?'on':'off'}`, S.isAdmin?'green':'red'); }
+function toggleSquad() {
+  if (!isSquad()) { toast('Switch to Squad tier first','red'); return; }
+  S.inSquad = !S.inSquad;
+  renderAll();
+  toast(`Squad membership ${S.inSquad?'on':'off'}`, S.inSquad?'green':'red');
+}
+function toggleRoblox() { S.robloxLinked = !S.robloxLinked; renderAccounts(); toast(`Roblox ${S.robloxLinked?'linked':'unlinked'}`, S.robloxLinked?'green':'red'); }
+
+// ═══════════════════════════════════════════
+// RECORDINGS
+// ═══════════════════════════════════════════
+function renderRecordings() {
+  var grid = document.getElementById('recordings-grid');
+  var tag = document.getElementById('rec-count-tag');
+  if (!grid) return;
+  if (tag) tag.textContent = S.recordings.length + ' SAVED';
+
+  grid.innerHTML = S.recordings.map(function(r) {
+    var isWin = r.result === 'W';
+    // fake heatmap colours per recording
+    var hues = ['#e8622a','#3b82f6','#2ecc71'];
+    var col = hues[r.id % hues.length];
+    return '<div class="rec-card" onclick="openRecording(' + r.id + ')">'
+      + '<div class="rec-thumb">'
+      + '<div class="rec-thumb-bg"></div>'
+      + '<div class="rec-thumb-grid"></div>'
+      // fake dots for "player positions"
+      + '<div style="position:absolute;inset:0;z-index:1">'
+      + '<div style="position:absolute;width:6px;height:6px;border-radius:50%;background:' + col + ';top:30%;left:40%;opacity:.7"></div>'
+      + '<div style="position:absolute;width:6px;height:6px;border-radius:50%;background:var(--red);top:55%;left:60%;opacity:.7"></div>'
+      + '<div style="position:absolute;width:6px;height:6px;border-radius:50%;background:' + col + ';top:70%;left:25%;opacity:.5"></div>'
+      + '</div>'
+      + '<div class="rec-thumb-play"><i data-lucide="play" style="width:16px;height:16px;color:var(--maple)"></i></div>'
+      + '<div class="rec-thumb-dur">' + r.dur + '</div>'
+      + '<div class="rec-watermark-badge"><div class="rwb-leaf"></div><div class="rwb-text">csry<span>.me</span></div></div>'
+      + '</div>'
+      + '<div class="rec-info">'
+      + '<div class="rec-info-top">'
+      + '<span class="rec-mode">' + r.mode + '</span>'
+      + '<span class="rec-result-badge ' + (isWin ? 'rec-result-w' : 'rec-result-l') + '">' + (isWin ? 'WIN' : 'LOSS') + ' ' + r.score + '</span>'
+      + '</div>'
+      + '<div class="rec-meta">'
+      + '<i data-lucide="map-pin"></i>' + r.map
+      + ' · <i data-lucide="clock-3"></i>' + r.ago
+      + ' · <i data-lucide="crosshair"></i>' + r.weapon
+      + (r.analyzed ? ' · <i data-lucide="brain" style="color:var(--maple)"></i><span style="color:var(--maple)">analyzed</span>' : ' · <span style="color:var(--dim)">not analyzed</span>')
+      + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  refreshIcons();
+}
+
+// ─── REPLAY ENGINE ───
+var replayState = {
+  scene: null, camera: null, renderer: null,
+  playerMesh: null, opponentMesh: null,
+  playerTrail: [], opponentTrail: [],
+  killMarkers: [], deathMarkers: [],
+  animId: null, playing: false,
+  tick: 0, maxTick: 494,
+  recording: null,
+  trailLines: [],
+  cameraMode: 'bird', // 'bird' | 'pov'
+  lastTranscriptTick: -1,
+  transcriptItems: [],
+};
+
+function generateReplayData(r) {
+  // Procedurally generate fake movement paths per recording id
+  var seed = typeof r.id === 'number' ? r.id : 1;
+  var rand = function(s) { s = Math.sin(s * 9301 + 49297) * 233280; return s - Math.floor(s); };
+  var isWin = r.result === 'W';
+  var dur = parseInt(r.dur) * 60 + parseInt(r.dur.split(':')[1]);
+  var totalTicks = dur;
+  var playerPath = [], oppPath = [];
+  var px = rand(seed)*6-3, pz = rand(seed+1)*6-3;
+  var ox = rand(seed+2)*6-3, oz = rand(seed+3)*6-3;
+  for (var i = 0; i <= totalTicks; i++) {
+    px += (rand(seed+i*0.1)-0.5)*0.12;
+    pz += (rand(seed+i*0.13)-0.5)*0.12;
+    ox += (rand(seed+i*0.17)-0.5)*0.12;
+    oz += (rand(seed+i*0.19)-0.5)*0.12;
+    px = Math.max(-7, Math.min(7, px));
+    pz = Math.max(-7, Math.min(7, pz));
+    ox = Math.max(-7, Math.min(7, ox));
+    oz = Math.max(-7, Math.min(7, oz));
+    playerPath.push({x:px, z:pz});
+    oppPath.push({x:ox, z:oz});
+  }
+  // Generate kill/death events
+  var score = r.score.split('-');
+  var kills = parseInt(score[0]), deaths = parseInt(score[1]);
+  var events = [];
+  for (var k = 0; k < kills; k++) {
+    var t = Math.floor(rand(seed+k*7)*totalTicks);
+    var pos = playerPath[t] || {x:0,z:0};
+    events.push({type:'kill', tick:t, x:pos.x, z:pos.z, label:'Kill #'+(k+1)});
+  }
+  for (var d = 0; d < deaths; d++) {
+    var t2 = Math.floor(rand(seed+d*13)*totalTicks);
+    var pos2 = playerPath[t2] || {x:0,z:0};
+    events.push({type:'death', tick:t2, x:pos2.x, z:pos2.z, label:'Death #'+(d+1)});
+  }
+  events.sort(function(a,b){return a.tick-b.tick;});
+  return { playerPath:playerPath, oppPath:oppPath, events:events, totalTicks:totalTicks };
+}
+
+function openRecording(id) {
+  var r = S.recordings.find(function(x){ return x.id === id; });
+  if (!r) return;
+  replayState.recording = r;
+
+  // Update header
+  document.getElementById('replay-title').textContent = r.mode + ' · ' + r.map;
+  document.getElementById('replay-meta').textContent = (r.result==='W'?'Win':'Loss') + ' · ' + r.score + ' · ' + r.weapon + ' · ' + r.dur;
+  document.getElementById('replay-time').textContent = '0:00 / ' + r.dur;
+  document.getElementById('replay-bg').classList.add('show');
+
+  // Generate data
+  var data = generateReplayData(r);
+  replayState.data = data;
+  replayState.tick = 0;
+  replayState.maxTick = data.totalTicks;
+  replayState.playing = false;
+  replayState.lastTranscriptTick = -1;
+  var trEl = document.getElementById('replay-transcript');
+  if (trEl) trEl.innerHTML = '';
+
+  // Populate events list
+  var eventsEl = document.getElementById('replay-events');
+  eventsEl.innerHTML = data.events.map(function(e) {
+    var m = Math.floor(e.tick/60), s = String(e.tick%60).padStart(2,'0');
+    var cls = e.type==='kill' ? 're-kill' : 're-death';
+    var icon = e.type==='kill' ? 'crosshair' : 'skull';
+    return '<div class="replay-event">'
+      + '<span class="re-time">'+m+':'+s+'</span>'
+      + '<div class="re-icon '+cls+'"><i data-lucide="'+icon+'" style="width:10px;height:10px"></i></div>'
+      + '<span>'+e.label+'</span>'
+      + '</div>';
+  }).join('');
+  refreshIcons();
+
+  // Init or reset Three.js
+  setTimeout(function() { initReplayThree(data); }, 50);
+}
+
+function initReplayThree(data) {
+  var canvas = document.getElementById('replay-canvas');
+  var w = canvas.clientWidth, h = 320;
+  canvas.width = w * window.devicePixelRatio;
+  canvas.height = h * window.devicePixelRatio;
+
+  // Cleanup previous
+  if (replayState.animId) cancelAnimationFrame(replayState.animId);
+  if (replayState.renderer) { replayState.renderer.dispose(); }
+
+  var THREE = window.THREE;
+  if (!THREE) { toast('3D viewer loading...', 'maple'); return; }
+
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x050608);
+  scene.fog = new THREE.Fog(0x050608, 18, 32);
+
+  var camera = new THREE.PerspectiveCamera(52, w/h, 0.1, 100);
+  camera.position.set(0, 14, 8);
+  camera.lookAt(0, 0, 0);
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(w, h);
+
+  // Floor grid
+  var gridHelper = new THREE.GridHelper(18, 18, 0x1a1a2e, 0x1a1a2e);
+  scene.add(gridHelper);
+
+  // Floor plane
+  var floorGeo = new THREE.PlaneGeometry(18, 18);
+  var floorMat = new THREE.MeshBasicMaterial({color: 0x0a0b10, side: THREE.DoubleSide});
+  var floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.01;
+  scene.add(floor);
+
+  // Map obstacles (boxes)
+  var obstacleDefs = [
+    {x:-4,z:-3,w:2,h:0.8,d:1},{x:3,z:2,w:1.5,h:1,d:2},
+    {x:0,z:0,w:1,h:0.6,d:3},{x:-2,z:3,w:2,h:0.8,d:1},
+    {x:4,z:-4,w:1,h:1.2,d:1},{x:-5,z:1,w:1,h:0.9,d:1.5},
+  ];
+  obstacleDefs.forEach(function(o) {
+    var geo = new THREE.BoxGeometry(o.w, o.h, o.d);
+    var mat = new THREE.MeshBasicMaterial({color:0x1c1c2e, wireframe:false});
+    var mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(o.x, o.h/2, o.z);
+    scene.add(mesh);
+    // Edge lines
+    var edges = new THREE.EdgesGeometry(geo);
+    var lineMat = new THREE.LineBasicMaterial({color:0x2a2a4a});
+    var lines = new THREE.LineSegments(edges, lineMat);
+    lines.position.copy(mesh.position);
+    scene.add(lines);
+  });
+
+  // Ambient light
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+  var ptLight = new THREE.PointLight(0xe8622a, 1.2, 20);
+  ptLight.position.set(0, 8, 0);
+  scene.add(ptLight);
+
+  // Player sphere
+  var playerGeo = new THREE.SphereGeometry(0.28, 12, 12);
+  var playerMat = new THREE.MeshBasicMaterial({color: 0xe8622a});
+  var playerMesh = new THREE.Mesh(playerGeo, playerMat);
+  playerMesh.position.y = 0.28;
+  scene.add(playerMesh);
+
+  // Player glow ring
+  var ringGeo = new THREE.RingGeometry(0.3, 0.45, 16);
+  var ringMat = new THREE.MeshBasicMaterial({color:0xe8622a, side:THREE.DoubleSide, transparent:true, opacity:0.3});
+  var ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI/2;
+  ring.position.y = 0.01;
+  scene.add(ring);
+
+  // Opponent sphere
+  var oppGeo = new THREE.SphereGeometry(0.28, 12, 12);
+  var oppMat = new THREE.MeshBasicMaterial({color: 0xe74c3c});
+  var oppMesh = new THREE.Mesh(oppGeo, oppMat);
+  oppMesh.position.y = 0.28;
+  scene.add(oppMesh);
+
+  // Opponent glow ring
+  var ringGeo2 = new THREE.RingGeometry(0.3, 0.45, 16);
+  var ringMat2 = new THREE.MeshBasicMaterial({color:0xe74c3c, side:THREE.DoubleSide, transparent:true, opacity:0.3});
+  var ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+  ring2.rotation.x = -Math.PI/2;
+  ring2.position.y = 0.01;
+  scene.add(ring2);
+
+  // Trail geometry holders
+  var playerTrailPoints = [];
+  var oppTrailPoints = [];
+  var playerTrailLine = null;
+  var oppTrailLine = null;
+
+  // Event markers
+  data.events.forEach(function(e) {
+    var isKill = e.type === 'kill';
+    var markerGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.08, 8);
+    var markerMat = new THREE.MeshBasicMaterial({
+      color: isKill ? 0xe8622a : 0xe74c3c,
+      transparent: true, opacity: 0.0
+    });
+    var marker = new THREE.Mesh(markerGeo, markerMat);
+    marker.position.set(e.x, 0.04, e.z);
+    marker.userData = { tick: e.tick, type: e.type };
+    scene.add(marker);
+  });
+
+  replayState.scene = scene;
+  replayState.camera = camera;
+  replayState.renderer = renderer;
+  replayState.playerMesh = playerMesh;
+  replayState.oppMesh = oppMesh;
+  replayState.playerRing = ring;
+  replayState.oppRing = ring2;
+  replayState.playerTrailPoints = playerTrailPoints;
+  replayState.oppTrailPoints = oppTrailPoints;
+  replayState.playerTrailLine = null;
+  replayState.oppTrailLine = null;
+  replayState.data = data;
+
+  updateReplayTick(0);
+  animateReplay();
+}
+
+function updateReplayTick(tick) {
+  var rs = replayState;
+  var data = rs.data;
+  if (!data || !rs.playerMesh) return;
+  tick = Math.min(tick, data.totalTicks);
+  rs.tick = tick;
+
+  var THREE = window.THREE;
+  var pp = data.playerPath[tick] || data.playerPath[data.playerPath.length-1];
+  var op = data.oppPath[tick] || data.oppPath[data.oppPath.length-1];
+
+  rs.playerMesh.position.set(pp.x, 0.28, pp.z);
+  rs.playerRing.position.set(pp.x, 0.01, pp.z);
+  rs.oppMesh.position.set(op.x, 0.28, op.z);
+  rs.oppRing.position.set(op.x, 0.01, op.z);
+
+  // Rebuild trails (last 80 ticks)
+  var trailLen = 80;
+  var pTrail = [], oTrail = [];
+  for (var i = Math.max(0, tick-trailLen); i <= tick; i++) {
+    var pt = data.playerPath[i], ot = data.oppPath[i];
+    if (pt) pTrail.push(new THREE.Vector3(pt.x, 0.05, pt.z));
+    if (ot) oTrail.push(new THREE.Vector3(ot.x, 0.05, ot.z));
+  }
+
+  // Remove old trails
+  if (rs.playerTrailLine) { rs.scene.remove(rs.playerTrailLine); rs.playerTrailLine.geometry.dispose(); }
+  if (rs.oppTrailLine) { rs.scene.remove(rs.oppTrailLine); rs.oppTrailLine.geometry.dispose(); }
+
+  if (pTrail.length > 1) {
+    var pg = new THREE.BufferGeometry().setFromPoints(pTrail);
+    var pl = new THREE.Line(pg, new THREE.LineBasicMaterial({color:0xe8622a, transparent:true, opacity:0.5}));
+    rs.scene.add(pl); rs.playerTrailLine = pl;
+  }
+  if (oTrail.length > 1) {
+    var og = new THREE.BufferGeometry().setFromPoints(oTrail);
+    var ol = new THREE.Line(og, new THREE.LineBasicMaterial({color:0xe74c3c, transparent:true, opacity:0.5}));
+    rs.scene.add(ol); rs.oppTrailLine = ol;
+  }
+
+  // Show/hide event markers
+  rs.scene.children.forEach(function(obj) {
+    if (obj.userData && obj.userData.tick !== undefined) {
+      var dist = tick - obj.userData.tick;
+      if (dist >= 0 && dist < 60) {
+        obj.material.opacity = Math.max(0, 0.7 - dist/60*0.7);
+      } else { obj.material.opacity = 0; }
+    }
+  });
+
+  // Update UI
+  var m = Math.floor(tick/60), s = String(tick%60).padStart(2,'0');
+  var dur = rs.recording ? rs.recording.dur : '8:14';
+  document.getElementById('replay-time').textContent = m+':'+s+' / '+dur;
+  var pct = data.totalTicks > 0 ? (tick/data.totalTicks)*100 : 0;
+  document.getElementById('replay-progress').style.width = pct+'%';
+}
+
+function toggleCameraMode() {
+  var rs = replayState;
+  rs.cameraMode = rs.cameraMode === 'bird' ? 'pov' : 'bird';
+  var label = document.getElementById('cam-toggle-label');
+  var icon = document.getElementById('cam-toggle-icon');
+  var povInd = document.getElementById('pov-indicator');
+  var btn = document.getElementById('cam-toggle-btn');
+  if (rs.cameraMode === 'pov') {
+    // Now IN pov — button offers to switch back to bird
+    if (label) label.textContent = "Bird's Eye";
+    if (icon) icon.setAttribute('data-lucide','map');
+    if (povInd) povInd.classList.add('show');
+    if (btn) { btn.style.borderColor='var(--maple-d)'; btn.style.color='var(--maple)'; }
+    refreshIcons();
+  } else {
+    // Now IN bird — button offers to switch to pov
+    if (label) label.textContent = 'POV';
+    if (icon) icon.setAttribute('data-lucide','eye');
+    if (povInd) povInd.classList.remove('show');
+    if (btn) { btn.style.borderColor=''; btn.style.color=''; }
+    refreshIcons();
+  }
+}
+
+// Transcript event definitions — weapon switches, movement, reloads, etc.
+var TRANSCRIPT_EVENTS = [
+  { interval:18, icon:'sword', label:'Switched to Shotgun', cls:'blink' },
+  { interval:32, icon:'crosshair', label:'Kill — headshot', cls:'blink' },
+  { interval:47, icon:'refresh-cw', label:'Reloading...', cls:'blink-blue' },
+  { interval:55, icon:'arrow-up-right', label:'Flanking left', cls:'blink-blue' },
+  { interval:71, icon:'sword', label:'Switched to Pistol', cls:'blink' },
+  { interval:89, icon:'skull', label:'Eliminated — respawning', cls:'blink-red' },
+  { interval:103, icon:'arrow-up-right', label:'Pushed mid', cls:'blink-blue' },
+  { interval:117, icon:'crosshair', label:'Kill — body shot', cls:'blink' },
+  { interval:134, icon:'shield', label:'Took cover', cls:'blink-blue' },
+  { interval:149, icon:'refresh-cw', label:'Reloading...', cls:'blink-blue' },
+  { interval:163, icon:'sword', label:'Switched to Rifle', cls:'blink' },
+  { interval:178, icon:'crosshair', label:'Kill — clean', cls:'blink' },
+  { interval:201, icon:'skull', label:'Eliminated', cls:'blink-red' },
+  { interval:222, icon:'arrow-up-right', label:'Holding angle', cls:'blink-blue' },
+  { interval:248, icon:'refresh-cw', label:'Reloading...', cls:'blink-blue' },
+  { interval:267, icon:'crosshair', label:'Kill — headshot', cls:'blink' },
+  { interval:290, icon:'sword', label:'Switched to Shotgun', cls:'blink' },
+  { interval:312, icon:'skull', label:'Eliminated', cls:'blink-red' },
+  { interval:340, icon:'arrow-up-right', label:'Repositioning', cls:'blink-blue' },
+  { interval:370, icon:'crosshair', label:'Kill — finishing blow', cls:'blink' },
+  { interval:400, icon:'refresh-cw', label:'Reloading...', cls:'blink-blue' },
+  { interval:430, icon:'crosshair', label:'Kill — clean', cls:'blink' },
+  { interval:460, icon:'shield', label:'Round won', cls:'blink' },
+];
+
+function pushTranscriptEvent(ev, tick) {
+  var rs = replayState;
+  var m = Math.floor(tick/60), s = String(tick%60).padStart(2,'0');
+  var el = document.getElementById('replay-transcript');
+  if (!el) return;
+
+  var item = document.createElement('div');
+  item.className = 'transcript-item ' + (ev.cls || '');
+  item.innerHTML = '<span class="tr-time">'+m+':'+s+'</span>'
+    + '<span class="tr-icon"><i data-lucide="'+ev.icon+'" style="width:10px;height:10px"></i></span>'
+    + '<span>'+ev.label+'</span>';
+  el.appendChild(item);
+  el.scrollTop = el.scrollHeight;
+  refreshIcons();
+
+  // Remove blink class after 1.4s
+  setTimeout(function() { item.classList.remove('blink','blink-red','blink-blue'); }, 1400);
+  // Keep max 20 items
+  while (el.children.length > 20) el.removeChild(el.firstChild);
+}
+
+function animateReplay() {
+  var rs = replayState;
+  rs.animId = requestAnimationFrame(animateReplay);
+  if (rs.playing && rs.tick < rs.maxTick) {
+    updateReplayTick(rs.tick + 1);
+    if (rs.tick >= rs.maxTick) {
+      rs.playing = false;
+      var btn = document.getElementById('replay-play-icon');
+      if (btn) { btn.setAttribute('data-lucide','play'); refreshIcons(); }
+    }
+  }
+
+  // Transcript — check every tick
+  if (rs.playing && rs.data) {
+    var curTick = rs.tick;
+    TRANSCRIPT_EVENTS.forEach(function(ev) {
+      if (curTick >= ev.interval && rs.lastTranscriptTick < ev.interval) {
+        pushTranscriptEvent(ev, curTick);
+      }
+    });
+    rs.lastTranscriptTick = curTick;
+  }
+
+  if (rs.renderer && rs.scene && rs.camera) {
+    var THREE = window.THREE;
+    if (THREE && rs.playerMesh) {
+      if (rs.cameraMode === 'pov') {
+        // POV — camera sits just behind + above player, looks toward opponent
+        var pp = rs.playerMesh.position;
+        var op = rs.oppMesh ? rs.oppMesh.position : {x:0,y:0,z:0};
+        // Direction from player to opponent
+        var dx = op.x - pp.x, dz = op.z - pp.z;
+        var len = Math.sqrt(dx*dx+dz*dz) || 1;
+        // Position camera slightly behind player
+        rs.camera.position.set(
+          pp.x - (dx/len)*1.2,
+          pp.y + 1.4,
+          pp.z - (dz/len)*1.2
+        );
+        rs.camera.lookAt(op.x, op.y + 0.5, op.z);
+      } else {
+        // Bird's eye — slowly orbit
+        var t = Date.now() * 0.0003;
+        rs.camera.position.x = Math.sin(t) * 3;
+        rs.camera.position.y = 14;
+        rs.camera.position.z = 8 + Math.cos(t) * 2;
+        rs.camera.lookAt(0, 0, 0);
+      }
+    }
+    rs.renderer.render(rs.scene, rs.camera);
+  }
+}
+
+function toggleReplayPlay() {
+  replayState.playing = !replayState.playing;
+  if (replayState.tick >= replayState.maxTick) { replayState.tick = 0; replayState.playing = true; }
+  var icon = document.getElementById('replay-play-icon');
+  if (icon) { icon.setAttribute('data-lucide', replayState.playing ? 'pause' : 'play'); refreshIcons(); }
+}
+
+function scrubReplay(e) {
+  var bar = document.getElementById('replay-scrubber');
+  var rect = bar.getBoundingClientRect();
+  var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  updateReplayTick(Math.floor(pct * replayState.maxTick));
+}
+
+function closeReplay(e) {
+  if (e && e.target !== document.getElementById('replay-bg') && !e.target.closest('.modal-close')) return;
+  document.getElementById('replay-bg').classList.remove('show');
+  if (replayState.animId) { cancelAnimationFrame(replayState.animId); replayState.animId = null; }
+  replayState.playing = false;
+}
+
+function runAnalysisFromReplay() {
+  closeReplay();
+  setTimeout(runAnalysis, 300);
+}
+
+// ═══════════════════════════════════════════
+// LUCIDE HELPER
+// ═══════════════════════════════════════════
+function refreshIcons() {
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+function init() {
+  renderAll();
+  refreshIcons();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+// Show demo hint once
+setTimeout(() => toast('Tip: right-click the logo for demo controls','maple'), 1000);
+</script>
+</body>
+</html>
